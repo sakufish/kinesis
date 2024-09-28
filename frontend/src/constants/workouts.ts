@@ -83,7 +83,7 @@ const workouts: {
                     status: "bad",
                     message: "Your hips are too high. Make sure your body is in a straight line."
                 }
-            } else if (shoulderHipAngle > 205) {
+            } else if (shoulderHipAngle > 200) {
                 return {
                     status: "bad",
                     message: "Your hips are too low. Make sure your body is in a straight line."
@@ -119,7 +119,9 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            if (hipShoulderAngle < 340) {
+            console.log(hipShoulderAngle);
+
+            if (hipShoulderAngle < 330) {
                 return {
                     status: "bad",
                     message: "You're leaning forward too much. Make sure to keep your back straight."
@@ -155,7 +157,7 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            if (hipShoulderAngle < 340) {
+            if (hipShoulderAngle < 330) {
                 return {
                     status: "bad",
                     message: "You're leaning forward too much. Make sure to keep your back straight."
@@ -205,7 +207,7 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            if (hipShoulderAngle < 340) {
+            if (hipShoulderAngle < 330) {
                 return {
                     status: "bad",
                     message: "You're leaning forward too much. Make sure to keep your back straight."
@@ -241,7 +243,7 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            if (hipShoulderAngle < 340) {
+            if (hipShoulderAngle < 330) {
                 return {
                     status: "bad",
                     message: "You're leaning too much. Make sure to keep your back straight."
