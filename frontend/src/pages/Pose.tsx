@@ -6,6 +6,7 @@ import workouts from '../constants/workouts';
 import RepProgressIndicator from '../components/RepProgressIndicator';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { useSearchParams } from 'react-router-dom';
+import ReactConfetti from 'react-confetti';
 
 const detectorConfig = {
     runtime: 'tfjs',
@@ -20,6 +21,7 @@ const Pose = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     // const [workout, setWorkout] = useState(searchParams.get("workout") || "Pushups");
     const [workout, setWorkout] = useState("Pushups");
+    const [reps, setReps] = useState<number>(searchParams.has("reps") ? parseInt(searchParams.get("reps")!) : 10);
 
     const [startNum, setStartNum] = useState<number | null>(null);
     const [middleNum, setMiddleNum] = useState<number | null>(null);
@@ -130,8 +132,19 @@ const Pose = () => {
         return () => clearInterval(interval);
     }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
 
+    useEffect(() => {
+        if (count === reps) {
+            setIsCounting(false);
+        }
+    }, [count, reps]);
+
     return (
         <div className="flex flex-col items-start pl-32 justify-center min-h-screen p-4 bg-black text-white border">
+            { count === reps && <ReactConfetti colors={[
+                "#004777",
+                "#F7B801",
+                "#A30000",
+            ]} recycle={false} numberOfPieces={500} />}
             <h1 className="text-3xl font-semibold italic mb-4 text-orange-500">SOLO WORKOUT</h1>
             <div className="flex items-center justify-start">
                 {}
@@ -201,7 +214,7 @@ const Pose = () => {
                     { searchParams.has("workout") && <div className="text-lg mb-4 text-orange-500">Exercise: {searchParams.get("workout")}</div> }
 
                     {}
-                    <div className="text-4xl font-bold">Count: {count} {searchParams.has("reps") ? `out of ${searchParams.get("reps")}`: ""}</div>
+                    <div className="text-4xl font-bold">Count: {count} {`/ ${reps}`}</div>
                 </div>
             </div>
 
