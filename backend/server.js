@@ -25,7 +25,7 @@ const connectDB = async () => {
     }
 };
 
-//connectDB();
+connectDB();
 
 app.use('/api', geminiRoute);
 app.use('/api', usersRoute);
