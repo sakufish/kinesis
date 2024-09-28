@@ -6,6 +6,9 @@ import Pose from './pages/Pose';
 import Dash from './pages/Dash/Dash';
 import Solo from './pages/solo/Solo';
 
+
+import Guided from './pages/Guided/Guided';
+
 const App = () => {
   return (
     <Router>
@@ -16,6 +19,11 @@ const App = () => {
         <Route path="/dash" element = {<Dash />} />
         <Route path="/solo" element = {<Solo />} />
 
+        {/* <Route path="/Achievements" element = {< Achievement/>} />
+        <Route path="/workout" element = {<Workout />} /> */}
+
+
+        <Route path="/guided" element = {<Guided />} />
       </Routes>
     </Router>
   );

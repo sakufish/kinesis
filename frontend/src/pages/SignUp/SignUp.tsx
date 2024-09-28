@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState('');
+  const navigate = useNavigate(); 
 
   const handleSignUp = async () => {
     try {
-      // Make a request to the backend to create a user and get the user ID
+      
       const response = await fetch('/api/signup', {
         method: 'POST',
         headers: {
@@ -16,12 +18,14 @@ const SignUp: React.FC = () => {
       });
 
       const data = await response.json();
-      const { userId } = data; // Assuming backend returns userId
+      const { userId } = data; 
 
-      // Store the userId in a cookie
+      
       Cookies.set('userId', userId, { expires: 365, path: '/' });
 
-      // You can now link the user account with this ID
+      
+      navigate('/dash');
+
       console.log('User ID stored in cookie:', userId);
     } catch (error) {
       console.error('Error during sign-up:', error);
