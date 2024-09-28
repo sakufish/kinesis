@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Left from './assets/left.png'; // Importing the left image
 import BottomRight from './assets/bottomRight.png'; // Importing the bottom right image
 import Preferences from './assets/settings.png'; // Importing the preferences/settings icon
@@ -11,6 +12,7 @@ import AchievementHover from './assets/Achievement_hover.png';
 
 const Dashboard: React.FC = () => {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null); // State to track hover
+  const navigate = useNavigate(); // Initialize navigate
 
   const userName = "@username"; // Placeholder for username associated with UUID
 
@@ -33,6 +35,7 @@ const Dashboard: React.FC = () => {
           className="relative flex items-center justify-center cursor-pointer" 
           onMouseEnter={() => setHoveredIcon('SOLO')}
           onMouseLeave={() => setHoveredIcon(null)}
+          onClick={() => navigate('/solo')} // Navigate to /solo on click
         >
           <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">
             SOLO
