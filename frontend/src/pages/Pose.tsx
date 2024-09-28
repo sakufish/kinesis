@@ -96,10 +96,10 @@ const Pose = () => {
     
                 setPercentage(percentage);
     
-                if (percentage < 0.2 && currentPosition === "down") {
+                if (percentage < 0.3 && currentPosition === "down") {
                     setCurrentPosition("up");
                     setCount((prevCount) => prevCount + 1);
-                } else if (percentage > 0.8 && currentPosition === "up") {
+                } else if (percentage > 0.7 && currentPosition === "up") {
                     setCurrentPosition("down");
                 }
             });
@@ -127,7 +127,9 @@ const Pose = () => {
             }}>{isCounting ? "Stop" : "Start"} Counting</button>
 
             <p>Up Y: {upY}, Down Y: {downY}</p>
-            <p>Count: {count}</p>
+            <p style={{
+                fontSize: "100px"
+            }} >Count: {count}</p>
             <p>Current Position: {currentPosition}</p>
             {percentage && <p>Percentage: {percentage}</p>}
         </div>
