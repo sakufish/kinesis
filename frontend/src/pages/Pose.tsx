@@ -357,7 +357,7 @@ const Pose = () => {
                             </div>
 
                             <div className="ml-8">
-                                <div className="text-lg mb-4 text-orange-500">Exercise: {workout}</div>
+                                <div className="text-4xl mb-4 text-orange-500">{workout}</div>
 
                                 <div className='font-bold text-4xl'>
                                     <span className='text-8xl'>{count}</span>
