@@ -119,7 +119,7 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            if (hipShoulderAngle < 330) {
+            if (hipShoulderAngle < 335) {
                 return {
                     status: "bad",
                     message: "You're leaning forward too much. Make sure to keep your back straight."
@@ -155,7 +155,7 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            if (hipShoulderAngle < 330) {
+            if (hipShoulderAngle < 335) {
                 return {
                     status: "bad",
                     message: "You're leaning forward too much. Make sure to keep your back straight."
@@ -205,7 +205,7 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            if (hipShoulderAngle < 330) {
+            if (hipShoulderAngle < 335) {
                 return {
                     status: "bad",
                     message: "You're leaning forward too much. Make sure to keep your back straight."
@@ -241,7 +241,7 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            if (hipShoulderAngle < 330) {
+            if (hipShoulderAngle < 350) {
                 return {
                     status: "bad",
                     message: "You're leaning too much. Make sure to keep your back straight."
