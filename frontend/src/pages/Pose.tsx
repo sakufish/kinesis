@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import workouts from '../constants/workouts';
 import RepProgressIndicator from '../components/RepProgressIndicator';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import { useSearchParams } from 'react-router-dom';
 
 const detectorConfig = {
     runtime: 'tfjs',
@@ -16,6 +17,8 @@ const Pose = () => {
     const [detector, setDetector] = useState<poseDetection.PoseDetector | null>(null);
 
     const [workout, setWorkout] = useState("Pushups");
+
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [startNum, setStartNum] = useState<number | null>(null);
     const [middleNum, setMiddleNum] = useState<number | null>(null);
@@ -194,10 +197,10 @@ const Pose = () => {
                     )}
 
                     {/* Selected Exercise */}
-                    <div className="text-lg mb-4 text-orange-500">Exercise: {workout}</div>
+                    { searchParams.has("workout") && <div className="text-lg mb-4 text-orange-500">Exercise: {searchParams.get("workout")}</div> }
 
                     {/* Count */}
-                    <div className="text-4xl font-bold">Count: {count}</div>
+                    <div className="text-4xl font-bold">Count: {count} {searchParams.has("reps") ? `out of ${searchParams.get("reps")}`: ""}</div>
                 </div>
             </div>
 
