@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import workouts from "../../constants/workouts";
+import Cookies from 'js-cookie';
 
-// Define the Flashcard type for workouts
 interface WorkoutFlashcard {
   workout: string;
   reps: number;
@@ -8,25 +10,32 @@ interface WorkoutFlashcard {
 }
 
 const WorkoutFlashcards: React.FC = () => {
-  const [flashcards, setFlashcards] = useState<WorkoutFlashcard[]>([]); // Array to store workout flashcards
+  const [flashcards, setFlashcards] = useState<WorkoutFlashcard[]>([]);
+  const [searchParams] = useSearchParams();
+  const muscleGroup = searchParams.get("muscleGroup") || "Full Body";
 
-  // Fetch workout flashcards from Gemini API
   const getWorkoutFlashcards = async () => {
-    const prompt = `Generate five workout flashcards in this format:
+    const userId = Cookies.get('userId');
+
+    const userResponse = await fetch(`http://localhost:3000/api/user/${userId}`);
+    const userData = await userResponse.json();
+
+    const prompt = `Generate five workout flashcards targeting the ${muscleGroup} muscle group, out of only these exercises: ${Object.keys(workouts).join(", ")}.     The user has these injuries: ${userData.injuries}, Wants the difficulty to be ${userData.difficulty}, and has these additional details: ${userData.details}. Generate Based on ALL THESE FACTORS. Higher Reps for Higher Difficulties, preferences.
+in this format:
     [
       {
-        "workout": "Squats",
-        "reps": 10,
-        "reason": "Squats are a great workout for the legs because they target the quads, hamstrings, and glutes. They don't interfere with your shoulder injury because they don't require any shoulder movement."
+        "workout": "Overhead Press",
+        "reps": 12,
+        "reason": "The overhead press targets the shoulder muscles, specifically the deltoids. It is a key compound movement for shoulder development."
       },
       {
-        "workout": "Pushups",
+        "workout": "Lateral Raises",
         "reps": 15,
-        "reason": "Pushups are a great upper body workout targeting the chest, triceps, and shoulders. They avoid strain on the lower back."
+        "reason": "Lateral raises focus on the side deltoid, helping to widen and define the shoulder muscles."
       }
     ]
-    Ensure that the JSON is valid. Do not include any extra text or characters outside the array.`;
-    
+    Ensure that the JSON is valid and the workouts are appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array. If nothing matches, give pushups.`;
+    console.log(prompt)
     try {
       const response = await fetch('http://localhost:3000/api/gemini', {
         method: 'POST',
@@ -38,11 +47,7 @@ const WorkoutFlashcards: React.FC = () => {
 
       const data = await response.json();
       const rawResponse = data.description;
-
-      // Clean up response by removing potential unwanted characters
       const cleanedResponse = rawResponse.trim();
-
-      // Parse the cleaned JSON response safely
       const flashcardsArray = JSON.parse(cleanedResponse);
       setFlashcards(flashcardsArray);
     } catch (error) {
@@ -51,8 +56,8 @@ const WorkoutFlashcards: React.FC = () => {
   };
 
   useEffect(() => {
-    getWorkoutFlashcards(); // Fetch flashcards on component mount
-  }, []);
+    getWorkoutFlashcards();
+  }, [muscleGroup]);
 
   return (
     <div className="flex flex-wrap justify-center gap-4">
