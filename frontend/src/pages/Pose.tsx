@@ -26,6 +26,9 @@ const Pose = () => {
     const [count, setCount] = useState(0);
     const [isCounting, setIsCounting] = useState(false);
 
+    const [isStartingPositionCountdownPlaying, setIsStartingPositionCountdownPlaying] = useState(false);
+    const [isMiddlePositionCountdownPlaying, setIsMiddlePositionCountdownPlaying] = useState(false);
+
     const webcamRef = useRef<Webcam>(null);
 
     useEffect(() => {
@@ -79,13 +82,8 @@ const Pose = () => {
         }
     }
 
-    const startCalibration = async () => {
-        setTimeout(() => {
-            setStartPosition();
-        }, 5000);
-        setTimeout(() => {
-            setDownPosition();
-        }, 3000);
+    const startCalibration = () => {
+        setIsStartingPositionCountdownPlaying(true);
     }
 
     const getPercentage = async () => {
@@ -135,29 +133,36 @@ const Pose = () => {
                 frameRate: { max: 30 },
             }}/>
 
-            {/* <CountdownCircleTimer
-                isPlaying={isStartingPositionCountdownPlaying}
-                duration={5}
-                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                colorsTime={[7, 5, 2, 0]}
-                onComplete={() => {
-                    setStartPosition();
-                }}
-            >
-                {({ remainingTime }) => remainingTime}
-            </CountdownCircleTimer>
+            {isStartingPositionCountdownPlaying && (
+                <CountdownCircleTimer
+                    isPlaying={isStartingPositionCountdownPlaying}
+                    duration={5}
+                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                    colorsTime={[7, 5, 2, 0]}
+                    onComplete={() => {
+                        setStartPosition();
+                        setIsStartingPositionCountdownPlaying(false);
+                        setIsMiddlePositionCountdownPlaying(true);
+                    }}
+                >
+                    {({ remainingTime }) => remainingTime}
+                </CountdownCircleTimer>
+            )}
 
-            <CountdownCircleTimer
-                isPlaying={isMiddlePositionCountdownPlaying}
-                duration={5}
-                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                colorsTime={[7, 5, 2, 0]}
-                onComplete={() => {
-                    setDownPosition();
-                }}
-            >
-                {({ remainingTime }) => remainingTime}
-            </CountdownCircleTimer> */}
+            {isMiddlePositionCountdownPlaying && (
+                <CountdownCircleTimer
+                    isPlaying={isMiddlePositionCountdownPlaying}
+                    duration={3}
+                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                    colorsTime={[7, 5, 2, 0]}
+                    onComplete={() => {
+                        setDownPosition();
+                        setIsMiddlePositionCountdownPlaying(false);
+                    }}
+                >
+                    {({ remainingTime }) => remainingTime}
+                </CountdownCircleTimer>
+            )}
 
             <button onClick={startCalibration}>Start Calibration</button>
 

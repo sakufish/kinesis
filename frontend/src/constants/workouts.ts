@@ -4,7 +4,9 @@ const workouts: {
     [key: string]: {
         startPercentage: number,
         middlePercentage: number,
-        function: (pose: poseDetection.Pose) => number }
+        function: (pose: poseDetection.Pose) => number,
+        postureFunction: (pose: poseDetection.Pose) => any,
+    }
 } = {
     "Pushups": {
         startPercentage: 0.2,
@@ -16,7 +18,7 @@ const workouts: {
             const shoulderY = (leftShoulderY + rightShoulderY) / 2;
 
             return shoulderY; 
-        }
+        },
     }
 };
 
