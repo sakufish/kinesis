@@ -32,7 +32,7 @@ const Solo: React.FC = () => {
           <div className="absolute top-1/2 left-0 h-[10%] w-[4px] bg-orange-500 rounded-r-lg opacity-0 group-hover:opacity-100 group-hover:h-[50%] transition-all duration-300 transform -translate-y-1/2"></div>
           <h2 className="text-2xl font-semibold text-[#FF833A] mb-4">GUIDED</h2>
           <p className="text-white mb-4">
-            Select muscle groups you would like to target and effectively train. An AI model will recommend you suggested stretches and exercises based on selections.
+            Select muscle groups you would like to target and effectively train. An ⚡ AI model will recommend you suggested stretches and exercises based on selections.
           </p>
 
           {}
