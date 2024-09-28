@@ -220,6 +220,7 @@ const Dashboard: React.FC = () => {
           className="relative flex items-center justify-center cursor-pointer"
           onMouseEnter={() => setHoveredIcon('ACHIEVEMENTS')}
           onMouseLeave={() => setHoveredIcon(null)}
+          onClick={() => navigate("/achievements")}
           whileHover={{ scale: 1.1 }}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}

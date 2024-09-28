@@ -19,7 +19,7 @@ const App = () => {
         <Route path="/dash" element = {<Dash />} />
         <Route path="/solo" element = {<Solo />} />
 
-        <Route path="/Achievements" element = {< Achievement/>} />
+        <Route path="/achievements" element = {< Achievement/>} />
         {/* <Route path="/workout" element = {<Workout />} /> */}
 
 
