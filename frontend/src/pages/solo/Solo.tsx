@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BG from './assets/SOLObg.png';
 
 const Solo: React.FC = () => {
+  const [reps, setReps] = useState<number | ''>(''); // State to store the number of reps
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); // State to track selected option (either muscle group or workout)
+
+  // Arrays of workout and muscle group options
+  const workouts = ['Push Ups', 'Sit Ups', 'Squats', 'Jump Rope', 'Jumping Jacks'];
+  const muscleGroups = ['Chest', 'Back', 'Shoulders', 'Arms', 'Legs', 'Glutes'];
+
   return (
     <div
       className="relative h-screen text-white p-8 flex items-center justify-center"
@@ -24,9 +31,26 @@ const Solo: React.FC = () => {
           {/* Orange Bar - Growing effect */}
           <div className="absolute top-1/2 left-0 h-[10%] w-[4px] bg-orange-500 rounded-r-lg opacity-0 group-hover:opacity-100 group-hover:h-[50%] transition-all duration-300 transform -translate-y-1/2"></div>
           <h2 className="text-2xl font-semibold text-[#FF833A] mb-4">GUIDED</h2>
-          <p className="text-white">
-            Select muscle groups you would like to target and effectively train. Our AI model will recommend exercises based on your selection.
+          <p className="text-white mb-4">
+            Select muscle groups you would like to target and effectively train. An AI model will recommend you suggested stretches and exercises based on selections.
           </p>
+
+          {/* Muscle Group Options */}
+          <div className="flex space-x-4 overflow-x-auto whitespace-nowrap">
+            {muscleGroups.map((group) => (
+              <button
+                key={group}
+                onClick={() => setSelectedOption(group)}
+                className={`px-4 py-2 bg-transparent border ${
+                  selectedOption === group
+                    ? 'bg-orange-500 border-orange-500 text-orange-500'
+                    : 'border-white text-white'
+                } rounded-md hover:text-orange-500 hover:border-orange-500 transition duration-200`}
+              >
+                {group}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Second Section */}
@@ -34,26 +58,44 @@ const Solo: React.FC = () => {
           {/* Orange Bar - Growing effect */}
           <div className="absolute top-1/2 left-0 h-[10%] w-[4px] bg-orange-500 rounded-r-lg opacity-0 group-hover:opacity-100 group-hover:h-[50%] transition-all duration-300 transform -translate-y-1/2"></div>
           <h2 className="text-2xl font-bold text-[#FF833A] mb-4">Enter Manually</h2>
-          <p className="text-white mb-4">Pick a workout from the following options:</p>
+          <p className="text-white mb-4">Enter what workout, exercise, or stretch you would like to do. Monitor your form and reps alongside.</p>
 
-          {/* Continuous Row of List Items */}
+          {/* Workout Options */}
           <div className="flex space-x-4 overflow-x-auto whitespace-nowrap">
-            <button className="px-4 py-2 bg-transparent border border-white text-white rounded-md hover:text-orange-500 hover:border-orange-500 transition duration-200">
-              Push Ups
-            </button>
-            <button className="px-4 py-2 bg-transparent border border-white text-white rounded-md hover:text-orange-500 hover:border-orange-500 transition duration-200">
-              Sit Ups
-            </button>
-            <button className="px-4 py-2 bg-transparent border border-white text-white rounded-md hover:text-orange-500 hover:border-orange-500 transition duration-200">
-              Squats
-            </button>
-            <button className="px-4 py-2 bg-transparent border border-white text-white rounded-md hover:text-orange-500 hover:border-orange-500 transition duration-200">
-              Jump Rope
-            </button>
-            <button className="px-4 py-2 bg-transparent border border-white text-white rounded-md hover:text-orange-500 hover:border-orange-500 transition duration-200">
-              Jumping Jacks
-            </button>
+            {workouts.map((workout) => (
+              <button
+                key={workout}
+                onClick={() => setSelectedOption(workout)}
+                className={`px-4 py-2 bg-transparent border ${
+                  selectedOption === workout
+                    ? 'bg-orange-500 border-orange-500 text-orange-500'
+                    : 'border-white text-white'
+                } rounded-md hover:text-orange-500 hover:border-orange-500 transition duration-200`}
+              >
+                {workout}
+              </button>
+            ))}
           </div>
+
+          {/* Reps Input */}
+          <div className="mt-6">
+            <label htmlFor="reps" className="text-white font-thin text-md">Reps:</label>
+            <input
+              id="reps"
+              type="number"
+              value={reps}
+              onChange={(e) => setReps(parseInt(e.target.value))}
+              placeholder="0"
+              className="ml-4 px-4 py-2 w-20 bg-[#2B191D] text-white rounded-md focus:outline-none transition duration-200"
+            />
+          </div>
+        </div>
+
+        {/* Next Button */}
+        <div className="flex justify-end mt-10 text-center w-[50rem]">
+          <button className="px-8 py-2 bg-[#FF833A] text-black font-bold rounded-lg hover:bg-orange-600 transition duration-300">
+            Next <span className='text-xl'>→</span>
+          </button>
         </div>
       </div>
     </div>
@@ -61,4 +103,3 @@ const Solo: React.FC = () => {
 };
 
 export default Solo;
-    
