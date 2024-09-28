@@ -15,7 +15,7 @@ const Guided = () => {
             "reps": 10,
             "reason": "Squats are a great workout for the legs because they target the quads, hamstrings, and glutes. They don't interfere with your shoulder injury because they don't require any shoulder movement. 10 reps is a good starting point for beginners."
         }
-            DO NOT SELECT ANY WORKOUT OUTSIDE OF THE PROVIDED LIST, IF THERE AREN'T ANY WORKOUTS THAT FIT THE CRITERIA, PLEASE RESPOND WITH AN EMPTY JSON.`;
+            IF THERE AREN'T ANY WORKOUTS THAT FIT THE CRITERIA, JUST RESPOND WITH PUSHUPS.`;
 
         console.log(prompt);
 
