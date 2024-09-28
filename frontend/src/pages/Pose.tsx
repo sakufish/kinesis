@@ -136,14 +136,14 @@ const Pose = () => {
     }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
 
     useEffect(() => {
-        if (count === reps) {
+        if (count >= reps) {
             setIsCounting(false);
         }
     }, [count, reps]);
 
     return (
         <div className="flex flex-col items-start pl-32 justify-center min-h-screen p-4 bg-black text-white">
-            {count === reps && <ReactConfetti colors={["#004777", "#F7B801", "#A30000"]} recycle={false} numberOfPieces={500} />}
+            {count >= reps && <ReactConfetti colors={["#004777", "#F7B801", "#A30000"]} recycle={false} numberOfPieces={500} />}
             
             <h1 className="text-3xl font-semibold italic mb-4 text-orange-500">SOLO WORKOUT</h1>
             
