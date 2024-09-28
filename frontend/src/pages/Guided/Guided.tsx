@@ -20,7 +20,7 @@ const WorkoutFlashcards: React.FC = () => {
     const userResponse = await fetch(`http://localhost:3000/api/user/${userId}`);
     const userData = await userResponse.json();
 
-    const prompt = `Generate five workout flashcards targeting the ${muscleGroup} muscle group, out of only these exercises: ${Object.keys(workouts).join(", ")}.     The user has these injuries: ${userData.injuries}, Wants the difficulty to be ${userData.difficulty}, and has these additional details: ${userData.details}. Generate Based on ALL THESE FACTORS. Higher Reps for Higher Difficulties, preferences.
+    const prompt = `Generate five workout and 4 rest flashcards targeting the ${muscleGroup} muscle group, out of only these exercises: ${Object.keys(workouts).join(", ")}.     The user has these injuries: ${userData.injuries}, Wants the difficulty to be ${userData.difficulty}, and has these additional details: ${userData.details}. Generate Based on ALL THESE FACTORS. Higher Reps for Higher Difficulties, preferences. After each exercise, there will be rest.
 in this format:
     [
       {
