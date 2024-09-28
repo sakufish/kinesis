@@ -368,17 +368,17 @@ const Pose = () => {
                     </div>
 
                     <div className="w-1/4 bg-gray-900 text-white p-4 right-0 top-0 h-screen fixed">
-                        <h2 className="text-2xl font-bold mb-4">Upcoming Steps</h2>
+                        <h2 className="text-2xl font-semibold italic mb-4">UPCOMING STEPS</h2>
                         <ul>
                             {Array.from({ length: exercises.length + restTimes.length - currentStepIndex - 1 }).map((_, index) => {
                                 const stepIndex = currentStepIndex + 1 + index;
                                 return stepIndex % 2 === 1 ? (
                                     <li key={index} className="mb-2">
-                                        <div className="text-lg">Rest - {restTimes[Math.floor(stepIndex / 2)]} seconds</div>
+                                        <div className="text-sm italic">⛱ Rest - {restTimes[Math.floor(stepIndex / 2)]} seconds</div>
                                     </li>
                                 ) : (
                                     <li key={index} className="mb-2">
-                                        <div className="text-lg">{exercises[Math.floor(stepIndex / 2)]} - {repsList[Math.floor(stepIndex / 2)]} reps</div>
+                                        <div className="text-sm italic">{exercises[Math.floor(stepIndex / 2)]} - {repsList[Math.floor(stepIndex / 2)]} reps</div>
                                     </li>
                                 );
                             })}
