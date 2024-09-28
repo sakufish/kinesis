@@ -31,8 +31,4 @@ connectDB();
 app.use('/api', geminiRoute);
 app.use('/api', usersRoute); // Use the users route
 
-app.get('/ping', (req, res) => {
-    res.send('pong');
-});
-
 app.listen(port, () => console.log(`Server running on port ${port}`));
