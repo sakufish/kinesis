@@ -26,7 +26,7 @@ const Pose = () => {
     const repsList = searchParams.getAll("reps").map((rep) => parseInt(rep));
     const restTimes = searchParams.getAll("rest").map((rest) => parseInt(rest));
 
-    // State to track the current step (which can be a workout or a rest period)
+    
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [workout, setWorkout] = useState(exercises[currentStepIndex] || "Pushups");
     const [reps, setReps] = useState(repsList[currentStepIndex] || 10);
@@ -212,11 +212,11 @@ const Pose = () => {
             setCurrentStepIndex(nextIndex);
 
             if (nextIndex % 2 === 1) {
-                // Set rest time if it's a rest step
+                
                 setRestTime(restTimes[Math.floor(nextIndex / 2)]);
                 setIsResting(true);
             } else {
-                // Set exercise details if it's an exercise step
+                
                 setWorkout(exercises[Math.floor(nextIndex / 2)]);
                 setReps(repsList[Math.floor(nextIndex / 2)]);
                 setIsResting(false);

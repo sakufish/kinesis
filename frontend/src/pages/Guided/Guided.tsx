@@ -49,7 +49,7 @@ Ensure that the JSON is valid and the workouts are appropriate for the ${muscleG
       const cleanedResponse = rawResponse.trim();
       const workoutLinks: WorkoutLink[] = JSON.parse(cleanedResponse);
 
-      // Construct URL with workout and reps, adding rest once between exercises
+      
       let queryString = '';
       workoutLinks.forEach((workoutLink, index) => {
         queryString += `workout=${encodeURIComponent(workoutLink.workout)}&reps=${workoutLink.reps}`;
@@ -60,7 +60,7 @@ Ensure that the JSON is valid and the workouts are appropriate for the ${muscleG
 
       const workoutPageUrl = `/pose?${queryString}`;
 
-      // Redirect to the workout page
+      
       window.location.href = workoutPageUrl;
 
     } catch (error) {
