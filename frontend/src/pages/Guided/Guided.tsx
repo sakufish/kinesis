@@ -3,39 +3,38 @@ import { useSearchParams } from "react-router-dom";
 import workouts from "../../constants/workouts";
 import Cookies from 'js-cookie';
 
-interface WorkoutFlashcard {
+interface WorkoutLink {
   workout: string;
   reps: number;
-  reason: string;
 }
 
-const WorkoutFlashcards: React.FC = () => {
-  const [flashcards, setFlashcards] = useState<WorkoutFlashcard[]>([]);
+const WorkoutRedirect: React.FC = () => {
   const [searchParams] = useSearchParams();
   const muscleGroup = searchParams.get("muscleGroup") || "Full Body";
 
-  const getWorkoutFlashcards = async () => {
+  const generateWorkoutLink = async () => {
     const userId = Cookies.get('userId');
-
     const userResponse = await fetch(`http://localhost:3000/api/user/${userId}`);
     const userData = await userResponse.json();
 
-    const prompt = `Generate five workout and 4 rest flashcards targeting the ${muscleGroup} muscle group, out of only these exercises: ${Object.keys(workouts).join(", ")}.     The user has these injuries: ${userData.injuries}, Wants the difficulty to be ${userData.difficulty}, and has these additional details: ${userData.details}. Generate Based on ALL THESE FACTORS. Higher Reps for Higher Difficulties, preferences. After each exercise, there will be rest.
+    const prompt = `Generate five workout flashcards targeting ${muscleGroup} using only these exercises: ${Object.keys(workouts).join(", ")}. If ${userData.difficulty} is easy, below 10 reps, if medium, below 18 reps, if hard, below 30 reps. More reps for higher difficulty.
+The user has these additional details: ${userData.details}. After each exercise block, add rest periods of varying time based on difficulty. The user has the following injuries: ${userData.injuries.join(",")}
 in this format:
-    [
-      {
-        "workout": "Overhead Press",
-        "reps": 12,
-        "reason": "The overhead press targets the shoulder muscles, specifically the deltoids. It is a key compound movement for shoulder development."
-      },
-      {
-        "workout": "Lateral Raises",
-        "reps": 15,
-        "reason": "Lateral raises focus on the side deltoid, helping to widen and define the shoulder muscles."
-      }
-    ]
-    Ensure that the JSON is valid and the workouts are appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array. If nothing matches, give pushups.`;
-    console.log(prompt)
+[
+  {
+    "workout": "Squats",
+    "reps": 20
+  },
+  {
+    "workout": "Pushups",
+    "reps": 20,
+    "rest": 30
+  }
+]
+Ensure that the JSON is valid and the workouts are appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array.`;
+
+    console.log(prompt);
+
     try {
       const response = await fetch('http://localhost:3000/api/gemini', {
         method: 'POST',
@@ -44,35 +43,40 @@ in this format:
         },
         body: JSON.stringify({ prompt }),
       });
-
+      console.log(response)
       const data = await response.json();
       const rawResponse = data.description;
       const cleanedResponse = rawResponse.trim();
-      const flashcardsArray = JSON.parse(cleanedResponse);
-      setFlashcards(flashcardsArray);
+      const workoutLinks: WorkoutLink[] = JSON.parse(cleanedResponse);
+
+      // Construct URL with workout and reps, adding rest once between exercises
+      let queryString = '';
+      workoutLinks.forEach((workoutLink, index) => {
+        queryString += `workout=${encodeURIComponent(workoutLink.workout)}&reps=${workoutLink.reps}`;
+        if (index < workoutLinks.length - 1) {
+          queryString += `&rest=60&`;
+        }
+      });
+
+      const workoutPageUrl = `/pose?${queryString}`;
+
+      // Redirect to the workout page
+      window.location.href = workoutPageUrl;
+
     } catch (error) {
-      console.error('Error fetching flashcards:', error);
+      console.error('Error generating workout link:', error);
     }
   };
 
   useEffect(() => {
-    getWorkoutFlashcards();
+    generateWorkoutLink();
   }, [muscleGroup]);
 
   return (
-    <div className="flex flex-wrap justify-center gap-4">
-      {flashcards.map((card, index) => (
-        <div
-          key={index}
-          className="w-64 p-4 border border-gray-400 rounded-md bg-white text-black"
-        >
-          <h2 className="text-xl font-bold mb-2">{card.workout}</h2>
-          <p className="text-md">Reps: {card.reps}</p>
-          <p className="text-sm mt-2">{card.reason}</p>
-        </div>
-      ))}
+    <div className="text-center text-white">
+      <p>Redirecting to your workout...</p>
     </div>
   );
 };
 
-export default WorkoutFlashcards;
+export default WorkoutRedirect;
