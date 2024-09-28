@@ -16,9 +16,10 @@ const detectorConfig = {
 const Pose = () => {
     const [detector, setDetector] = useState<poseDetection.PoseDetector | null>(null);
 
-    const [workout, setWorkout] = useState("Pushups");
 
     const [searchParams, setSearchParams] = useSearchParams();
+    // const [workout, setWorkout] = useState(searchParams.get("workout") || "Pushups");
+    const [workout, setWorkout] = useState("Pushups");
 
     const [startNum, setStartNum] = useState<number | null>(null);
     const [middleNum, setMiddleNum] = useState<number | null>(null);
