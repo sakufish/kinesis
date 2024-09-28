@@ -79,13 +79,17 @@ const Pose = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
+            if (!upY || !downY) {
+                return;
+            }
+
             getPercentage().then((percentage) => {
                 setPercentage(percentage);
             });
         }, 100);
 
         return () => clearInterval(interval);
-    }, [detector]);
+    }, [detector, upY, downY]);
     
 
     return (
