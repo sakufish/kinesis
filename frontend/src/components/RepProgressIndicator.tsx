@@ -7,11 +7,10 @@ type RepProgressIndicatorProps = {
     middlePercentage: number,
     currentPosition: "start" | "middle",
     currentPercentage: number | null,
-    orientation: "horizontal" | "vertical"
 };
 
 const RepProgressIndicator = (props: RepProgressIndicatorProps) => {
-    const { startPercentage, middlePercentage, currentPosition, currentPercentage, orientation } = props;
+    const { startPercentage, middlePercentage, currentPosition, currentPercentage } = props;
 
     return (
         <Stage width={50} height={200}>

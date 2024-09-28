@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import workouts from '../constants/workouts';
 import RepProgressIndicator from '../components/RepProgressIndicator';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 const detectorConfig = {
     runtime: 'tfjs',
@@ -78,6 +79,15 @@ const Pose = () => {
         }
     }
 
+    const startCalibration = async () => {
+        setTimeout(() => {
+            setStartPosition();
+        }, 5000);
+        setTimeout(() => {
+            setDownPosition();
+        }, 3000);
+    }
+
     const getPercentage = async () => {
         if (!startNum || !middleNum) {
             return null;
@@ -124,12 +134,32 @@ const Pose = () => {
             <Webcam ref={webcamRef} videoConstraints={{
                 frameRate: { max: 30 },
             }}/>
-            <button onClick={async () => {
-                await setStartPosition();
-            }}>Calibrate Up</button>
-            <button onClick={async () => {
-                await setDownPosition();
-            }}>Calibrate Down</button>
+
+            {/* <CountdownCircleTimer
+                isPlaying={isStartingPositionCountdownPlaying}
+                duration={5}
+                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                colorsTime={[7, 5, 2, 0]}
+                onComplete={() => {
+                    setStartPosition();
+                }}
+            >
+                {({ remainingTime }) => remainingTime}
+            </CountdownCircleTimer>
+
+            <CountdownCircleTimer
+                isPlaying={isMiddlePositionCountdownPlaying}
+                duration={5}
+                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                colorsTime={[7, 5, 2, 0]}
+                onComplete={() => {
+                    setDownPosition();
+                }}
+            >
+                {({ remainingTime }) => remainingTime}
+            </CountdownCircleTimer> */}
+
+            <button onClick={startCalibration}>Start Calibration</button>
 
             <button onClick={() => {
                 setIsCounting((prevIsCounting) => !prevIsCounting);
@@ -146,7 +176,6 @@ const Pose = () => {
                 middlePercentage={workouts[workout].middlePercentage}
                 currentPosition={currentPosition}
                 currentPercentage={percentage}
-                orientation="vertical"
             />
         </div>
     )
