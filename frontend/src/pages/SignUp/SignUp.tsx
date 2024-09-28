@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState('');
+  const navigate = useNavigate(); // Initialize the navigate function
 
   const handleSignUp = async () => {
     try {
@@ -21,7 +23,9 @@ const SignUp: React.FC = () => {
       // Store the userId in a cookie
       Cookies.set('userId', userId, { expires: 365, path: '/' });
 
-      // You can now link the user account with this ID
+      // Navigate to the /dash route
+      navigate('/dash');
+
       console.log('User ID stored in cookie:', userId);
     } catch (error) {
       console.error('Error during sign-up:', error);
