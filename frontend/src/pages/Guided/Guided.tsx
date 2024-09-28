@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 interface WorkoutLink {
   workout: string;
   reps: number;
+  rest?: number; 
 }
 
 const WorkoutRedirect: React.FC = () => {
@@ -17,23 +18,32 @@ const WorkoutRedirect: React.FC = () => {
     const userResponse = await fetch(`http://localhost:3000/api/user/${userId}`);
     const userData = await userResponse.json();
 
-    const prompt = `Generate five workout flashcards targeting ${muscleGroup} using only these exercises: ${Object.keys(workouts).join(", ")}. If ${userData.difficulty} is easy, below 10 reps, if medium, below 18 reps, if hard, below 30 reps. More reps for higher difficulty.
-The user has these additional details: ${userData.details}. After each exercise block, add rest periods of varying time based on difficulty. The user has the following injuries: ${userData.injuries.join(",")}
-in this format:
+    const prompt = `Generate a workout plan targeting ${muscleGroup} using only these exercises: ${Object.keys(workouts).join(", ")}. 
+Adjust the number of reps and rest times according to the desired difficulty level [${userData.difficulty}] as follows:
+- For "Easy", use lower reps (10-15) and longer rest periods (60-90 seconds).
+- For "Medium", use moderate reps (15-20) and moderate rest periods (45-60 seconds).
+- For "Hard", use higher reps (20-30) and shorter rest periods (30-45 seconds).
+
+The user has the following injuries: ${userData.injuries.join(",")}. Modify the exercises as necessary to avoid strain on injured areas. 
+The user provided the following additional details: ${userData.details}. After each exercise block, include a rest period based on difficulty.
+
+ONLY GENERATE ONE WORKOUT PLAN. 
+
+Use this format for the output:
 [
   {
     "workout": "Squats",
-    "reps": 20
+    "reps": 20,
+    "rest": 30
   },
   {
     "workout": "Pushups",
-    "reps": 20,
-    "rest": 30
+    "reps": 15,
+    "rest": 45
   }
 ]
-Ensure that the JSON is valid and the workouts are appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array.`;
 
-    console.log(prompt);
+Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array. do not include backticks`;
 
     try {
       const response = await fetch('http://localhost:3000/api/gemini', {
@@ -43,24 +53,24 @@ Ensure that the JSON is valid and the workouts are appropriate for the ${muscleG
         },
         body: JSON.stringify({ prompt }),
       });
-      console.log(response)
+
       const data = await response.json();
       const rawResponse = data.description;
       const cleanedResponse = rawResponse.trim();
       const workoutLinks: WorkoutLink[] = JSON.parse(cleanedResponse);
 
-      // Construct URL with workout and reps, adding rest once between exercises
       let queryString = '';
       workoutLinks.forEach((workoutLink, index) => {
         queryString += `workout=${encodeURIComponent(workoutLink.workout)}&reps=${workoutLink.reps}`;
+        if (workoutLink.rest) {
+          queryString += `&rest=${workoutLink.rest}`;
+        }
         if (index < workoutLinks.length - 1) {
-          queryString += `&rest=60&`;
+          queryString += '&';
         }
       });
 
       const workoutPageUrl = `/pose?${queryString}`;
-
-      // Redirect to the workout page
       window.location.href = workoutPageUrl;
 
     } catch (error) {
