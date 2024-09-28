@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/UserModel'); // Assuming UserModel.js is your User schema
-const { v4: uuidv4 } = require('uuid'); // For generating unique user IDs
+const User = require('../models/UserModel');
+const { v4: uuidv4 } = require('uuid');
 
-// Sign-up route
 router.post('/signup', async (req, res) => {
   const { name } = req.body;
 
@@ -12,17 +11,24 @@ router.post('/signup', async (req, res) => {
   }
 
   try {
-    // Generate a unique ID for the user
     const userId = uuidv4();
-
-    // Create a new user in the database
     const newUser = new User({ name, userId });
     await newUser.save();
-
-    // Send back the userId
     res.json({ userId });
   } catch (error) {
-    console.error('Error during user creation:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const user = await User.findOne({ userId: req.params.userId });
+    if (user) {
+      res.json({ name: user.name });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
 });
