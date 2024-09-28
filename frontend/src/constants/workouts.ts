@@ -5,7 +5,6 @@ const workouts: {
         startPercentage: number,
         middlePercentage: number,
         function: (pose: poseDetection.Pose) => number,
-        postureFunction: (pose: poseDetection.Pose) => any,
     }
 } = {
     "Pushups": {
