@@ -6,7 +6,7 @@
     box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.5); 
   }
 
-.font-roboto-condensed {
+#root {
     font-family: "Roboto Condensed", "sans-serif";
 }
   
