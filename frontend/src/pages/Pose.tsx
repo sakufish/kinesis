@@ -15,7 +15,10 @@ const Pose = () => {
 
     const [upY, setUpY] = useState<number | null>(null);
     const [downY, setDownY] = useState<number | null>(null);
+    const [currentPosition, setCurrentPosition] = useState<"up" | "down">("up");
     const [percentage, setPercentage] = useState<number | null>(null);
+    const [count, setCount] = useState(0);
+    const [isCounting, setIsCounting] = useState(false);
 
     const webcamRef = useRef<Webcam>(null);
 
@@ -82,17 +85,28 @@ const Pose = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (!upY || !downY) {
+            if (!upY || !downY || !isCounting) {
                 return;
             }
-
+    
             getPercentage().then((percentage) => {
+                if (!percentage) {
+                    return;
+                }
+    
                 setPercentage(percentage);
+    
+                if (percentage < 0.2 && currentPosition === "down") {
+                    setCurrentPosition("up");
+                    setCount((prevCount) => prevCount + 1);
+                } else if (percentage > 0.8 && currentPosition === "up") {
+                    setCurrentPosition("down");
+                }
             });
         }, 100);
-
+    
         return () => clearInterval(interval);
-    }, [detector, upY, downY]);
+    }, [detector, upY, downY, currentPosition, count, isCounting]);
     
 
     return (
@@ -107,8 +121,15 @@ const Pose = () => {
             <button onClick={async () => {
                 await setDownPosition();
             }}>Calibrate Down</button>
+
+            <button onClick={() => {
+                setIsCounting((prevIsCounting) => !prevIsCounting);
+            }}>{isCounting ? "Stop" : "Start"} Counting</button>
+
             <p>Up Y: {upY}, Down Y: {downY}</p>
-            {percentage && <p>Percentage: {percentage * 100}%   </p>}
+            <p>Count: {count}</p>
+            <p>Current Position: {currentPosition}</p>
+            {percentage && <p>Percentage: {percentage}</p>}
         </div>
     )
 }
