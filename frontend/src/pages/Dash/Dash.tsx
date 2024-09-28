@@ -11,6 +11,7 @@ import DuoHover from './assets/DUO_hover.png';
 import Achievement from './assets/Achievement.png';
 import AchievementHover from './assets/Achievement_hover.png';
 import Model from './assets/model.png';
+import Logo from './assets/KinesisText.png'
 
 const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, userId }) => {
   const [injuries, setInjuries] = useState<string[]>([]);
@@ -212,17 +213,20 @@ const Dashboard: React.FC = () => {
       </div>
       <img src={BottomRight} alt="Bottom Right Graphic" className="absolute bottom-0 right-0 w-[25rem] h-auto z-10" />
       <img src={Model} alt="Model" className="absolute top-0 right-20 z-30" style={{ maxHeight: '600px', maxWidth: '600px' }} />
-      <div className="absolute bottom-8 right-12 flex items-center space-x-4 z-20">
+      <div className="absolute bottom-8 right-12 flex items-end space-x-4 z-20">
+        {/* Welcome Back and Kinesis Logo */}
+        {/* Preferences aligned to the left of the logo */}
         <div
-          className="flex items-center space-x-2 mr-14 cursor-pointer"
+          className="flex flex-row space-x-2 items-center cursor-pointer mb-6 mr-6"
           onClick={() => setIsModalOpen(true)}
         >
-          <span className="text-sm italic mr-1 ">Preferences</span>
+          <span className="text-sm italic">Preferences</span>
           <img src={Preferences} alt="Preferences Icon" className="w-6 h-auto" />
         </div>
-        <div className="text-right">
+        <div className="text-right  p-4">
           <span className="block italic">{userName || '@username'}</span>
-          <span className="block text-sm italic font-semibold text-md">WELCOME BACK</span>
+          <span className="block text-sm italic font-semibold text-md mb-16">WELCOME BACK</span>
+          <img src={Logo} alt="Kinesis Logo" className="w-48 h-auto mt-4" />
         </div>
       </div>
 
