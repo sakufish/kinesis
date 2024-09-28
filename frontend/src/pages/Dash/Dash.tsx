@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import Left from './assets/left.png';
@@ -12,16 +12,34 @@ import Achievement from './assets/Achievement.png';
 import AchievementHover from './assets/Achievement_hover.png';
 import Model from './assets/model.png';
 
-const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, userId }) => {
   const [injuries, setInjuries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
-  const [difficulty, setDifficulty] = useState<string>('Medium'); // Default difficulty
-  const [details, setDetails] = useState<string>(''); // State to hold the details
+  const [difficulty, setDifficulty] = useState<string>('Medium');
+  const [details, setDetails] = useState<string>(''); 
+
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/user/${userId}`);
+        const data = await response.json();
+        if (response.ok) {
+          setInjuries(data.injuries || []);
+          setDifficulty(data.difficulty || 'Medium');
+          setDetails(data.details || '');
+        }
+      } catch (error) {
+        console.error('Error fetching preferences:', error);
+      }
+    };
+
+    fetchPreferences();
+  }, [userId]);
 
   const handleAddInjury = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputValue.trim()) {
       setInjuries((prevInjuries) => [...prevInjuries, inputValue.trim()]);
-      setInputValue(''); // Clear the input field
+      setInputValue(''); 
     }
   };
 
@@ -29,10 +47,24 @@ const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setInjuries((prevInjuries) => prevInjuries.filter((_, i) => i !== index));
   };
 
+  const handleSavePreferences = async () => {
+    try {
+      await fetch(`http://localhost:3000/api/user/${userId}/preferences`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ injuries, difficulty, details }),
+      });
+      onClose();
+    } catch (error) {
+      console.error('Error saving preferences:', error);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8 font-roboto-condensed">
       <div className="bg-[#241919] text-white p-8 rounded-lg w-[600px] relative">
-        {/* Close Button in the Top Right */}
         <button
           className="absolute top-2 right-2 text-white text-2xl hover:text-red-500"
           onClick={onClose}
@@ -42,11 +74,9 @@ const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
         <h1 className="text-2xl font-bold tracking-wide mb-6 text-center italic">PREFERENCES</h1>
 
-        {/* Injuries Section */}
         <h2 className="text-xl font-semibold mb-2 italic">INJURIES</h2>
         <p className="mb-4 italic text-[#888888]">KINESIS will help you come up with exercises without influencing injuries. Enter to add.</p>
 
-        {/* Input Field to Add Injuries */}
         <div className="flex flex-wrap gap-2 items-center border border-[#5F5F5F] rounded mb-4 bg-[#D9D9D9] bg-opacity-5 shadow-inner-top px-3 py-1">
           {injuries.map((injury, index) => (
             <div
@@ -72,11 +102,9 @@ const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           />
         </div>
 
-        {/* Difficulty Section */}
         <h2 className="text-xl font-semibold mb-2 italic">DIFFICULTY</h2>
         <p className="mb-4 italic text-[#888888]">Your difficulty level will help us recommend you appropriate exercises.</p>
 
-        {/* Difficulty Dropdown */}
         <select
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value)}
@@ -86,12 +114,8 @@ const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <option value="Medium">Medium</option>
           <option value="Hard">Hard</option>
         </select>
-
-        {/* Details Section */}
         <h2 className="text-xl font-semibold mt-6 mb-2 italic">DETAILS</h2>
-        <p className="mb-4 italic text-[#888888]">Add in details to help KINESIS understand your lifestyle.</p>
-
-        {/* Text Area for Details */}
+        <p className="mb-4 italic text-[#888888]">Add in details to help Jimbro3z understand your lifestyle.</p>
         <textarea
           value={details}
           onChange={(e) => setDetails(e.target.value)}
@@ -100,8 +124,9 @@ const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           rows={4}
         ></textarea>
 
-        {/* Close Button */}
-
+        <button onClick={handleSavePreferences} className="mt-6 w-full py-2 bg-orange-500 text-white rounded">
+          Save Preferences
+        </button>
       </div>
     </div>
   );
@@ -110,8 +135,28 @@ const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 const Dashboard: React.FC = () => {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>('');
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to handle modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const id = Cookies.get('userId');
+      if (id) {
+        setUserId(id);
+        try {
+          const response = await fetch(`http://localhost:3000/api/user/${id}`);
+          const data = await response.json();
+          if (response.ok) {
+            setUserName(data.name);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+    fetchUserData();
+  }, []);
 
   return (
     <div className="h-screen bg-black text-white relative p-8 font-roboto-condensed">
@@ -170,7 +215,7 @@ const Dashboard: React.FC = () => {
       <div className="absolute bottom-8 right-12 flex items-center space-x-4 z-20">
         <div
           className="flex items-center space-x-2 mr-14 cursor-pointer"
-          onClick={() => setIsModalOpen(true)} // Open modal on click
+          onClick={() => setIsModalOpen(true)}
         >
           <span className="text-sm italic mr-1 ">Preferences</span>
           <img src={Preferences} alt="Preferences Icon" className="w-6 h-auto" />
@@ -181,8 +226,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Render modal if isModalOpen is true */}
-      {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} userId={userId || ''} />}
     </div>
   );
 };
