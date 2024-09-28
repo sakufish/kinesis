@@ -80,12 +80,12 @@ const workouts: {
         startPercentage: 0.2,
         middlePercentage: 0.7,
         function: (pose) => {
-            const leftHipY = pose.keypoints[11].y;
-            const rightHipY = pose.keypoints[12].y;
+            const leftShoulderY = pose.keypoints[5].y;
+            const rightShoulderY = pose.keypoints[6].y;
 
-            const hipY = (leftHipY + rightHipY) / 2;
+            const shoulderY = (leftShoulderY + rightShoulderY) / 2;
 
-            return hipY;
+            return shoulderY;
         },
     },
 };
