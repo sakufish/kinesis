@@ -272,15 +272,58 @@ const Pose = () => {
                                     />
                                 </div>
 
-                                <Webcam
-                                    ref={webcamRef}
-                                    width={450}
-                                    height={0}
-                                    videoConstraints={{
-                                        frameRate: { max: 30 },
-                                    }}
-                                    className="rounded-md relative z-20 mt-4"
-                                />
+                                <div className="relative">
+                                    <Webcam
+                                        ref={webcamRef}
+                                        width={450}
+                                        height={0}
+                                        videoConstraints={{
+                                            frameRate: { max: 30 },
+                                        }}
+                                        className="rounded-md relative z-20 mt-4"
+                                    />
+                                    {isStartingPositionCountdownPlaying && (
+                                        <div className="absolute inset-0 flex flex-col gap-2 items-center justify-center z-30 bg-black/10">
+                                            <span className='text-3xl font-bold' style={{
+                                                textShadow: '0 0 10px #000'
+                                            }}>Resting Position</span>
+                                            <CountdownCircleTimer
+                                                isPlaying={isStartingPositionCountdownPlaying}
+                                                duration={5}
+                                                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                                colorsTime={[7, 5, 2, 0]}
+                                                onComplete={() => {
+                                                    setStartPosition();
+                                                    setIsStartingPositionCountdownPlaying(false);
+                                                    setIsMiddlePositionCountdownPlaying(true);
+                                                }}
+                                            >
+                                                {({ remainingTime }) => <div className="text-center text-6xl">{remainingTime}</div>}
+                                            </CountdownCircleTimer>
+                                        </div>
+                                    )}
+
+                                    {isMiddlePositionCountdownPlaying && (
+                                        <div className="absolute inset-0 flex flex-col gap-2 items-center justify-center z-30 bg-black/10">
+                                            <span className='text-3xl font-bold' style={{
+                                                textShadow: '0 0 10px #000'
+                                            }}>Active Position</span>
+                                            <CountdownCircleTimer
+                                                isPlaying={isMiddlePositionCountdownPlaying}
+                                                duration={5}
+                                                colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                                colorsTime={[7, 5, 2, 0]}
+                                                onComplete={() => {
+                                                    setDownPosition();
+                                                    setIsMiddlePositionCountdownPlaying(false);
+                                                    setIsCounting(true);
+                                                }}
+                                            >
+                                                {({ remainingTime }) => <div className="text-center text-6xl">{remainingTime}</div>}
+                                            </CountdownCircleTimer>
+                                        </div>
+                                    )}
+                                </div>
 
                                 <div className="mt-8 flex space-x-4 z-10">
                                     <button
@@ -295,6 +338,7 @@ const Pose = () => {
                                         onClick={() => setIsCounting((prev) => !prev)}
                                         className="flex flex-row justify-center items-center"
                                         disabled={!startNum || !middleNum}
+                                        style={{ opacity: !startNum || !middleNum ? 0.5 : 1 }}
                                     >                            
                                         <img src={CountICON} alt="Count" className='w-4 h-auto mr-1'/>
                                         {isCounting ? 'Stop Counting' : 'Start Counting'}
@@ -313,41 +357,12 @@ const Pose = () => {
                             </div>
 
                             <div className="ml-8">
-                                {isStartingPositionCountdownPlaying && (
-                                    <CountdownCircleTimer
-                                        isPlaying={isStartingPositionCountdownPlaying}
-                                        duration={5}
-                                        colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                                        colorsTime={[7, 5, 2, 0]}
-                                        onComplete={() => {
-                                            setStartPosition();
-                                            setIsStartingPositionCountdownPlaying(false);
-                                            setIsMiddlePositionCountdownPlaying(true);
-                                        }}
-                                    >
-                                        {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
-                                    </CountdownCircleTimer>
-                                )}
-
-                                {isMiddlePositionCountdownPlaying && (
-                                    <CountdownCircleTimer
-                                        isPlaying={isMiddlePositionCountdownPlaying}
-                                        duration={3}
-                                        colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                                        colorsTime={[7, 5, 2, 0]}
-                                        onComplete={() => {
-                                            setDownPosition();
-                                            setIsMiddlePositionCountdownPlaying(false);
-                                            setIsCounting(true);
-                                        }}
-                                    >
-                                        {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
-                                    </CountdownCircleTimer>
-                                )}
-
                                 <div className="text-lg mb-4 text-orange-500">Exercise: {workout}</div>
 
-                                <div className="text-4xl font-bold">Count: {count} / {reps}</div>
+                                <div className='font-bold text-4xl'>
+                                    <span className='text-8xl'>{count}</span>
+                                    <span className='italic'> / {reps}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
