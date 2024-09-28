@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import Left from './assets/left.png';
@@ -12,30 +12,106 @@ import Achievement from './assets/Achievement.png';
 import AchievementHover from './assets/Achievement_hover.png';
 import Model from './assets/model.png';
 
+const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [injuries, setInjuries] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [difficulty, setDifficulty] = useState<string>('Medium'); // Default difficulty
+  const [details, setDetails] = useState<string>(''); // State to hold the details
+
+  const handleAddInjury = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      setInjuries((prevInjuries) => [...prevInjuries, inputValue.trim()]);
+      setInputValue(''); // Clear the input field
+    }
+  };
+
+  const handleRemoveInjury = (index: number) => {
+    setInjuries((prevInjuries) => prevInjuries.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8">
+      <div className="bg-[#241919] text-white p-8 rounded-lg w-[600px] relative">
+        {/* Close Button in the Top Right */}
+        <button
+          className="absolute top-2 right-2 text-white text-2xl hover:text-red-500"
+          onClick={onClose}
+        >
+          &times;
+        </button>
+
+        <h1 className="text-2xl font-medium tracking-wide mb-6 text-center italic">PREFERENCES</h1>
+
+        {/* Injuries Section */}
+        <h2 className="text-xl font-semibold mb-2 italic">INJURIES</h2>
+        <p className="mb-4 italic text-[#888888]">Jimbro3z will help you come up with exercises without influencing injuries. Enter to add.</p>
+
+        {/* Input Field to Add Injuries */}
+        <div className="flex flex-wrap gap-2 items-center border border-[#5F5F5F] rounded mb-4 bg-[#D9D9D9] bg-opacity-5 shadow-inner-top px-3 py-1">
+          {injuries.map((injury, index) => (
+            <div
+              key={index}
+              className="flex my-[3px] text-white items-center bg-[#241919] border border-[#5F5F5F] p-1 rounded"
+            >
+              <span>{injury}</span>
+              <button
+                onClick={() => handleRemoveInjury(index)}
+                className="ml-2 text-red-500 font-bold hover:text-red-700"
+              >
+                X
+              </button>
+            </div>
+          ))}
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleAddInjury}
+            placeholder="Type and press Enter"
+            className="flex-grow p-2 bg-transparent text-white outline-none"
+          />
+        </div>
+
+        {/* Difficulty Section */}
+        <h2 className="text-xl font-semibold mb-2 italic">DIFFICULTY</h2>
+        <p className="mb-4 italic text-[#888888]">Your difficulty level will help us recommend you appropriate exercises.</p>
+
+        {/* Difficulty Dropdown */}
+        <select
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+          className="w-full p-2 rounded text-white text-sm border border-[#5F5F5F] bg-[#241919] shadow-inner-top"
+        >
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+
+        {/* Details Section */}
+        <h2 className="text-xl font-semibold mt-6 mb-2 italic">DETAILS</h2>
+        <p className="mb-4 italic text-[#888888]">Add in details to help Jimbro3z understand your lifestyle.</p>
+
+        {/* Text Area for Details */}
+        <textarea
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
+          placeholder="Enter details here..."
+          className="w-full p-2 rounded bg-[#241919] text-white border border-[#5F5F5F] shadow-inner-top"
+          rows={4}
+        ></textarea>
+
+        {/* Close Button */}
+
+      </div>
+    </div>
+  );
+};
+
 const Dashboard: React.FC = () => {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to handle modal visibility
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUserName = async () => {
-      const userId = Cookies.get('userId');
-      if (userId) {
-        try {
-          const response = await fetch(`http://localhost:3000/api/user/${userId}`);
-          const data = await response.json();
-          if (response.ok) {
-            setUserName(data.name);
-          } else {
-            console.error(data.error);
-          }
-        } catch (error) {
-          console.error('Error fetching username:', error);
-        }
-      }
-    };
-    fetchUserName();
-  }, []);
 
   return (
     <div className="h-screen bg-black text-white relative p-8">
@@ -92,7 +168,10 @@ const Dashboard: React.FC = () => {
       <img src={BottomRight} alt="Bottom Right Graphic" className="absolute bottom-0 right-0 w-[25rem] h-auto z-10" />
       <img src={Model} alt="Model" className="absolute top-0 right-20 z-30" style={{ maxHeight: '600px', maxWidth: '600px' }} />
       <div className="absolute bottom-8 right-12 flex items-center space-x-4 z-20">
-        <div className="flex items-center space-x-2 mr-14 cursor-pointer">
+        <div
+          className="flex items-center space-x-2 mr-14 cursor-pointer"
+          onClick={() => setIsModalOpen(true)} // Open modal on click
+        >
           <span className="text-sm italic mr-1 ">Preferences</span>
           <img src={Preferences} alt="Preferences Icon" className="w-6 h-auto" />
         </div>
@@ -101,6 +180,9 @@ const Dashboard: React.FC = () => {
           <span className="block text-sm italic font-semibold text-md">WELCOME BACK</span>
         </div>
       </div>
+
+      {/* Render modal if isModalOpen is true */}
+      {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} />}
     </div>
   );
 };
