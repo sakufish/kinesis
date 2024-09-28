@@ -5,10 +5,11 @@ const usersRoute = require('./routes/users.js'); // Import the new users route
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
+const app = express();
 app.use(cors());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 const connectDB = async () => {
@@ -30,10 +31,8 @@ connectDB();
 app.use('/api', geminiRoute);
 app.use('/api', usersRoute); // Use the users route
 
-app.get('/ping', async (req, res) => {
+app.get('/ping', (req, res) => {
     res.send('pong');
 });
 
-app.listen(port, () => {
-    console.log(`Server on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));
