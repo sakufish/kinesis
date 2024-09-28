@@ -294,6 +294,7 @@ const Pose = () => {
                                     <button
                                         onClick={() => setIsCounting((prev) => !prev)}
                                         className="flex flex-row justify-center items-center"
+                                        disabled={!startNum || !middleNum}
                                     >                            
                                         <img src={CountICON} alt="Count" className='w-4 h-auto mr-1'/>
                                         {isCounting ? 'Stop Counting' : 'Start Counting'}
@@ -342,10 +343,6 @@ const Pose = () => {
                                     >
                                         {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
                                     </CountdownCircleTimer>
-                                )}
-
-                                {!isStartingPositionCountdownPlaying && !isMiddlePositionCountdownPlaying && (
-                                    <div className="text-lg mb-4">Calibrated</div>
                                 )}
 
                                 <div className="text-lg mb-4 text-orange-500">Exercise: {workout}</div>
