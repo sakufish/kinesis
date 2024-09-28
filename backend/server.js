@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const geminiRoute = require('./routes/geminiRoute.js');
+const usersRoute = require('./routes/users.js'); // Import the new users route
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -25,7 +26,9 @@ const connectDB = async () => {
 
 connectDB();
 
+// Use the routes
 app.use('/api', geminiRoute);
+app.use('/api', usersRoute); // Use the users route
 
 app.listen(port, () => {
     console.log(`Server on port ${port}`);
