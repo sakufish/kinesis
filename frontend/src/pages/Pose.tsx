@@ -4,6 +4,8 @@ import Webcam from 'react-webcam';
 
 import { useEffect, useRef, useState } from 'react';
 
+import workouts from '../constants/workouts';
+
 const detectorConfig = {
     runtime: 'tfjs',
     modelType: 'SinglePose.Lightning',
@@ -13,9 +15,11 @@ const detectorConfig = {
 const Pose = () => {
     const [detector, setDetector] = useState<poseDetection.PoseDetector | null>(null);
 
-    const [upY, setUpY] = useState<number | null>(null);
-    const [downY, setDownY] = useState<number | null>(null);
-    const [currentPosition, setCurrentPosition] = useState<"up" | "down">("up");
+    const [workout, setWorkout] = useState("Pushups");
+
+    const [startNum, setStartNum] = useState<number | null>(null);
+    const [middleNum, setMiddleNum] = useState<number | null>(null);
+    const [currentPosition, setCurrentPosition] = useState<"start" | "middle">("start");
     const [percentage, setPercentage] = useState<number | null>(null);
     const [count, setCount] = useState(0);
     const [isCounting, setIsCounting] = useState(false);
@@ -48,44 +52,48 @@ const Pose = () => {
         return null;
     }
 
-    const getShoulderY = async () => {
+    const getPosition = async () => {
         const poses = await getPoses();
         if (!poses) {
             return null;
         }
-        return poses[0].keypoints[5].y + poses[0].keypoints[6].y / 2;
+
+        const workoutConfig = workouts[workout];
+        const num = workoutConfig.function(poses[0]);
+        return num;
     }
 
-    const setUpPosition = async () => {
-        const shoulderY = await getShoulderY();
-        if (shoulderY) {
-            setUpY(shoulderY);
+    const setStartPosition = async () => {
+        const num = await getPosition();
+        if (num) {
+            setStartNum(num);
         }
     }
 
     const setDownPosition = async () => {
-        const shoulderY = await getShoulderY();
-        if (shoulderY) {
-            setDownY(shoulderY);
+        const num = await getPosition();
+        if (num) {
+            setMiddleNum(num);
         }
     }
 
     const getPercentage = async () => {
-        if (!upY || !downY) {
+        if (!startNum || !middleNum) {
             return null;
         }
 
-        const shoulderY = await getShoulderY();
-        if (!shoulderY) {
+        const diff = middleNum - startNum;
+        const num = await getPosition();
+        if (!num) {
             return null;
         }
 
-        return (shoulderY - upY) / (downY - upY);
+        return (num - startNum) / diff;
     }
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (!upY || !downY || !isCounting) {
+            if (!startNum || !middleNum || !isCounting) {
                 return;
             }
     
@@ -96,17 +104,17 @@ const Pose = () => {
     
                 setPercentage(percentage);
     
-                if (percentage < 0.3 && currentPosition === "down") {
-                    setCurrentPosition("up");
+                if (percentage < workouts[workout].startPercentage && currentPosition === "middle") {
+                    setCurrentPosition("start");
                     setCount((prevCount) => prevCount + 1);
-                } else if (percentage > 0.7 && currentPosition === "up") {
-                    setCurrentPosition("down");
+                } else if (percentage > 0.7 && currentPosition === "start") {
+                    setCurrentPosition("middle");
                 }
             });
         }, 100);
     
         return () => clearInterval(interval);
-    }, [detector, upY, downY, currentPosition, count, isCounting]);
+    }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
     
 
     return (
@@ -116,7 +124,7 @@ const Pose = () => {
                 frameRate: { max: 30 },
             }}/>
             <button onClick={async () => {
-                await setUpPosition();
+                await setStartPosition();
             }}>Calibrate Up</button>
             <button onClick={async () => {
                 await setDownPosition();
@@ -126,7 +134,7 @@ const Pose = () => {
                 setIsCounting((prevIsCounting) => !prevIsCounting);
             }}>{isCounting ? "Stop" : "Start"} Counting</button>
 
-            <p>Up Y: {upY}, Down Y: {downY}</p>
+            <p>Start Num: {startNum}, Middle Num: {middleNum}</p>
             <p style={{
                 fontSize: "100px"
             }} >Count: {count}</p>
