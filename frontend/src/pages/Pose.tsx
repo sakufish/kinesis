@@ -8,8 +8,8 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { useSearchParams } from 'react-router-dom';
 import ReactConfetti from 'react-confetti';
 
-import frame from './workout/assets/frame.png'; // Importing the frame image
-import calibrate from './workout/assets/calibrate.svg'; // Importing icons
+import frame from './workout/assets/frame.png';
+import calibrate from './workout/assets/calibrate.svg';
 import CountICON from './workout/assets/count.svg';
 
 const detectorConfig = {
@@ -20,11 +20,18 @@ const detectorConfig = {
 
 const Pose = () => {
     const [detector, setDetector] = useState<poseDetection.PoseDetector | null>(null);
-    
-    // Get workout and reps from searchParams
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [workout, setWorkout] = useState(searchParams.get("workout") || "Pushups");
-    const [reps, setReps] = useState<number>(searchParams.has("reps") ? parseInt(searchParams.get("reps")!) : 10);
+    const [searchParams] = useSearchParams();
+
+    const exercises = searchParams.getAll("workout");
+    const repsList = searchParams.getAll("reps").map((rep) => parseInt(rep));
+    const restTimes = searchParams.getAll("rest").map((rest) => parseInt(rest));
+
+    // State to track the current step (which can be a workout or a rest period)
+    const [currentStepIndex, setCurrentStepIndex] = useState(0);
+    const [workout, setWorkout] = useState(exercises[currentStepIndex] || "Pushups");
+    const [reps, setReps] = useState(repsList[currentStepIndex] || 10);
+    const [restTime, setRestTime] = useState(restTimes[currentStepIndex] || 0);
+    const [isResting, setIsResting] = useState(false);
 
     const [startNum, setStartNum] = useState<number | null>(null);
     const [middleNum, setMiddleNum] = useState<number | null>(null);
@@ -62,7 +69,7 @@ const Pose = () => {
             }
         }
         return null;
-    }
+    };
 
     const getPosition = async () => {
         const poses = await getPoses();
@@ -72,26 +79,32 @@ const Pose = () => {
 
         const workoutConfig = workouts[workout];
         const num = workoutConfig.function(poses[0]);
+        const postureStatus = workoutConfig.postureFunction(poses[0]);
+
+        // if (postureStatus.status === "bad") {
+        //     console.log(postureStatus.message);
+        // }
+
         return num;
-    }
+    };
 
     const setStartPosition = async () => {
         const num = await getPosition();
         if (num) {
             setStartNum(num);
         }
-    }
+    };
 
     const setDownPosition = async () => {
         const num = await getPosition();
         if (num) {
             setMiddleNum(num);
         }
-    }
+    };
 
     const startCalibration = () => {
         setIsStartingPositionCountdownPlaying(true);
-    }
+    };
 
     const getPercentage = async () => {
         if (!startNum || !middleNum) {
@@ -106,9 +119,8 @@ const Pose = () => {
         const diff = middleNum - startNum;
         const calculatedPercentage = (num - startNum) / diff;
 
-        // Ensuring the percentage stays between 0% and 100%
         return Math.max(0, Math.min(1, calculatedPercentage));
-    }
+    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -130,7 +142,7 @@ const Pose = () => {
                     setCurrentPosition("middle");
                 }
             });
-        }, 10);
+        }, 100);
 
         return () => clearInterval(interval);
     }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
@@ -138,118 +150,176 @@ const Pose = () => {
     useEffect(() => {
         if (count >= reps) {
             setIsCounting(false);
+            moveToNextStep();
         }
     }, [count, reps]);
 
+    const moveToNextStep = () => {
+        const nextIndex = currentStepIndex + 1;
+        if (nextIndex < exercises.length + restTimes.length) {
+            setCurrentStepIndex(nextIndex);
+
+            if (nextIndex % 2 === 1) {
+                // Set rest time if it's a rest step
+                setRestTime(restTimes[Math.floor(nextIndex / 2)]);
+                setIsResting(true);
+            } else {
+                // Set exercise details if it's an exercise step
+                setWorkout(exercises[Math.floor(nextIndex / 2)]);
+                setReps(repsList[Math.floor(nextIndex / 2)]);
+                setIsResting(false);
+                setCount(0);
+                setPercentage(null);
+                setCurrentPosition("start");
+                setStartNum(null);
+                setMiddleNum(null);
+            }
+        }
+    };
+
+    const handleRestComplete = () => {
+        setIsResting(false);
+        moveToNextStep();
+    };
+
     return (
-        <div className="flex flex-col items-start pl-32 justify-center min-h-screen p-4 bg-black text-white">
-            {count >= reps && <ReactConfetti colors={["#004777", "#F7B801", "#A30000"]} recycle={false} numberOfPieces={500} />}
+        <div className="flex min-h-screen p-4 bg-black text-white relative">
+            {count >= reps && !isResting && <ReactConfetti colors={["#004777", "#F7B801", "#A30000"]} recycle={false} numberOfPieces={500} />}
             
-            <h1 className="text-3xl font-semibold italic mb-4 text-orange-500">SOLO WORKOUT</h1>
-            
-            <div className="flex items-center justify-center relative">
-                
-                {/* Frame Image Larger than Webcam */}
-                <div className="flex flex-col justify-center items-center relative w-[30rem] h-full">
-                    {/* Frame */}
-                    <div className="absolute top-0 left-0 transform z-10">
-                        <img
-                            src={frame}
-                            alt="Frame"
-                            className="w-full h-auto" // Larger dimensions for the frame
-                        />
+            {isResting ? (
+                <div className="flex flex-col items-center justify-center min-h-screen">
+                    <h1 className="text-3xl font-semibold italic mb-4 text-orange-500">Rest Time</h1>
+                    <CountdownCircleTimer
+                        isPlaying
+                        duration={restTime}
+                        colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                        colorsTime={[7, 5, 2, 0]}
+                        onComplete={handleRestComplete}
+                    >
+                        {({ remainingTime }) => <div className="text-4xl">{remainingTime} seconds</div>}
+                    </CountdownCircleTimer>
+                </div>
+            ) : (
+                <div className="flex-grow">
+                    <div className="flex flex-col items-start pl-32 justify-center">
+                        <h1 className="text-3xl font-semibold italic mb-4 text-orange-500">SOLO WORKOUT</h1>
+                        
+                        <div className="flex items-center justify-center relative">
+                            
+                            <div className="flex flex-col justify-center items-center relative w-[30rem] h-full">
+                                
+                                <div className="absolute top-0 left-0 transform z-10">
+                                    <img
+                                        src={frame}
+                                        alt="Frame"
+                                        className="w-full h-auto"
+                                    />
+                                </div>
+
+                                <Webcam
+                                    ref={webcamRef}
+                                    width={450}
+                                    height={0}
+                                    videoConstraints={{
+                                        frameRate: { max: 30 },
+                                    }}
+                                    className="rounded-md relative z-20 mt-4"
+                                />
+
+                                <div className="mt-8 flex space-x-4 z-10">
+                                    <button
+                                        onClick={startCalibration}
+                                        className="flex flex-row justify-center items-center"
+                                    >
+                                        <img src={calibrate} alt="Calibrate" className='w-4 h-auto mr-1' />
+                                        Start Calibration
+                                    </button>
+
+                                    <button
+                                        onClick={() => setIsCounting((prev) => !prev)}
+                                        className="flex flex-row justify-center items-center"
+                                    >                            
+                                        <img src={CountICON} alt="Count" className='w-4 h-auto mr-1'/>
+                                        {isCounting ? 'Stop Counting' : 'Start Counting'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="ml-8">
+                                <RepProgressIndicator
+                                    startPercentage={workouts[workout].startPercentage}
+                                    middlePercentage={workouts[workout].middlePercentage}
+                                    currentPosition={currentPosition}
+                                    currentPercentage={percentage}
+                                    barColor="orange"
+                                />
+                            </div>
+
+                            <div className="ml-8">
+                                {isStartingPositionCountdownPlaying && (
+                                    <CountdownCircleTimer
+                                        isPlaying={isStartingPositionCountdownPlaying}
+                                        duration={5}
+                                        colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                        colorsTime={[7, 5, 2, 0]}
+                                        onComplete={() => {
+                                            setStartPosition();
+                                            setIsStartingPositionCountdownPlaying(false);
+                                            setIsMiddlePositionCountdownPlaying(true);
+                                        }}
+                                    >
+                                        {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
+                                    </CountdownCircleTimer>
+                                )}
+
+                                {isMiddlePositionCountdownPlaying && (
+                                    <CountdownCircleTimer
+                                        isPlaying={isMiddlePositionCountdownPlaying}
+                                        duration={3}
+                                        colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                                        colorsTime={[7, 5, 2, 0]}
+                                        onComplete={() => {
+                                            setDownPosition();
+                                            setIsMiddlePositionCountdownPlaying(false);
+                                            setIsCounting(true);
+                                        }}
+                                    >
+                                        {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
+                                    </CountdownCircleTimer>
+                                )}
+
+                                {!isStartingPositionCountdownPlaying && !isMiddlePositionCountdownPlaying && (
+                                    <div className="text-lg mb-4">Calibrated</div>
+                                )}
+
+                                <div className="text-lg mb-4 text-orange-500">Exercise: {workout}</div>
+
+                                <div className="text-4xl font-bold">Count: {count} / {reps}</div>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Webcam */}
-                    <Webcam
-                        ref={webcamRef}
-                        width={450}
-                        height={0}
-                        videoConstraints={{
-                            frameRate: { max: 30 },
-                        }}
-                        className="rounded-md relative z-20 mt-4" // Positioned within the larger frame
-                    />
-
-                    {/* Buttons */}
-                    <div className="mt-8 flex space-x-4 z-10">
-                        <button
-                            onClick={startCalibration}
-                            className="flex flex-row justify-center items-center"
-                        >
-                            <img src={calibrate} alt="Calibrate" className='w-4 h-auto mr-1' />
-                            Start Calibration
-                        </button>
-
-                        <button
-                            onClick={() => setIsCounting((prev) => !prev)}
-                            className="flex flex-row justify-center items-center"
-                        >                            
-                            <img src={CountICON} alt="Count" className='w-4 h-auto mr-1'/>
-                            {isCounting ? 'Stop Counting' : 'Start Counting'}
-                        </button>
+                    <div className="w-1/4 bg-gray-900 text-white p-4 right-0 top-0 h-screen fixed">
+                        <h2 className="text-2xl font-bold mb-4">Upcoming Steps</h2>
+                        <ul>
+                            {Array.from({ length: exercises.length + restTimes.length - currentStepIndex - 1 }).map((_, index) => {
+                                const stepIndex = currentStepIndex + 1 + index;
+                                return stepIndex % 2 === 1 ? (
+                                    <li key={index} className="mb-2">
+                                        <div className="text-lg">Rest - {restTimes[Math.floor(stepIndex / 2)]} seconds</div>
+                                    </li>
+                                ) : (
+                                    <li key={index} className="mb-2">
+                                        <div className="text-lg">{exercises[Math.floor(stepIndex / 2)]} - {repsList[Math.floor(stepIndex / 2)]} reps</div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     </div>
                 </div>
-
-                {/* Rep Progress Indicator */}
-                <div className="ml-8">
-                    <RepProgressIndicator
-                        startPercentage={workouts[workout].startPercentage}
-                        middlePercentage={workouts[workout].middlePercentage}
-                        currentPosition={currentPosition}
-                        currentPercentage={percentage}
-                        barColor="orange"
-                    />
-                </div>
-
-                {/* Status and Count */}
-                <div className="ml-8">
-                    {/* Calibration/Position Status */}
-                    {isStartingPositionCountdownPlaying && (
-                        <CountdownCircleTimer
-                            isPlaying={isStartingPositionCountdownPlaying}
-                            duration={5}
-                            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                            colorsTime={[7, 5, 2, 0]}
-                            onComplete={() => {
-                                setStartPosition();
-                                setIsStartingPositionCountdownPlaying(false);
-                                setIsMiddlePositionCountdownPlaying(true);
-                            }}
-                        >
-                            {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
-                        </CountdownCircleTimer>
-                    )}
-
-                    {isMiddlePositionCountdownPlaying && (
-                        <CountdownCircleTimer
-                            isPlaying={isMiddlePositionCountdownPlaying}
-                            duration={3}
-                            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                            colorsTime={[7, 5, 2, 0]}
-                            onComplete={() => {
-                                setDownPosition();
-                                setIsMiddlePositionCountdownPlaying(false);
-                                setIsCounting(true); // Automatically start counting after calibration
-                            }}
-                        >
-                            {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
-                        </CountdownCircleTimer>
-                    )}
-
-                    {!isStartingPositionCountdownPlaying && !isMiddlePositionCountdownPlaying && (
-                        <div className="text-lg mb-4">Calibrated</div>
-                    )}
-
-                    {/* Selected Exercise */}
-                    <div className="text-lg mb-4 text-orange-500">Exercise: {workout}</div>
-
-                    {/* Count */}
-                    <div className="text-4xl font-bold">Count: {count} / {reps}</div>
-                </div>
-            </div>
+            )}
         </div>
     );
-}
+};
 
 export default Pose;
