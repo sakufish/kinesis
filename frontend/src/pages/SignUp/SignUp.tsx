@@ -35,7 +35,7 @@ const SignUp: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-black font-roboto-condensed">
       <h1 className="text-white text-5xl font-semibold italic">SIGN UP</h1>
-      <h2 className="text-orange-400 text-3xl font-bold mt-6 italic">JIMBRO3Z</h2>
+      <h2 className="text-orange-400 text-3xl font-bold mt-6 italic">KINESIS</h2>
 
       <input
         className="mt-8 w-64 p-3 text-center text-white bg-[#2B191D] placeholder-[#4F494B] focus:outline-none"

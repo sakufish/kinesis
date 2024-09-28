@@ -44,7 +44,7 @@ const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
         {/* Injuries Section */}
         <h2 className="text-xl font-semibold mb-2 italic">INJURIES</h2>
-        <p className="mb-4 italic text-[#888888]">Jimbro3z will help you come up with exercises without influencing injuries. Enter to add.</p>
+        <p className="mb-4 italic text-[#888888]">KINESIS will help you come up with exercises without influencing injuries. Enter to add.</p>
 
         {/* Input Field to Add Injuries */}
         <div className="flex flex-wrap gap-2 items-center border border-[#5F5F5F] rounded mb-4 bg-[#D9D9D9] bg-opacity-5 shadow-inner-top px-3 py-1">
@@ -89,7 +89,7 @@ const Modal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
         {/* Details Section */}
         <h2 className="text-xl font-semibold mt-6 mb-2 italic">DETAILS</h2>
-        <p className="mb-4 italic text-[#888888]">Add in details to help Jimbro3z understand your lifestyle.</p>
+        <p className="mb-4 italic text-[#888888]">Add in details to help KINESIS understand your lifestyle.</p>
 
         {/* Text Area for Details */}
         <textarea

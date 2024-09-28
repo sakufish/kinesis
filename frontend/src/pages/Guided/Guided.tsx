@@ -1,78 +1,73 @@
-import { useEffect, useState } from "react";
-import Workout from "../../types/Workout";
-import { useSearchParams } from "react-router-dom";
-import workouts from "../../constants/workouts";
+import React, { useState, useEffect } from "react";
 
-const Guided = () => {
-    const [workout, setWorkout] = useState<Workout | null>(null);
+// Define the Flashcard type for workouts
+interface WorkoutFlashcard {
+  workout: string;
+  reps: number;
+  reason: string;
+}
 
-    const [searchParams, ] = useSearchParams();
+const WorkoutFlashcards: React.FC = () => {
+  const [flashcards, setFlashcards] = useState<WorkoutFlashcard[]>([]); // Array to store workout flashcards
 
-    const getWorkout = async () => {
-        const prompt =  `I want to target the following muscle group: ${searchParams.get("muscleGroup")}. I have the following injuries: ${searchParams.get("injuries")}. Choose a workout from the following: ${Object.keys(workouts).join(", ")}, and the number of reps, and a reason for why relating it to how it targets the muscle group as well as how it doesn't interfere with the injury. Reps should be a single number. Respond in the following JSON format, without \`\`\`json, etc.:
-        {
-            "workout": "Squats",
-            "reps": 10,
-            "reason": "Squats are a great workout for the legs because they target the quads, hamstrings, and glutes. They don't interfere with your shoulder injury because they don't require any shoulder movement. 10 reps is a good starting point for beginners."
-        }
-            IF THERE AREN'T ANY WORKOUTS THAT FIT THE CRITERIA, JUST RESPOND WITH PUSHUPS.`;
+  // Fetch workout flashcards from Gemini API
+  const getWorkoutFlashcards = async () => {
+    const prompt = `Generate five workout flashcards in this format:
+    [
+      {
+        "workout": "Squats",
+        "reps": 10,
+        "reason": "Squats are a great workout for the legs because they target the quads, hamstrings, and glutes. They don't interfere with your shoulder injury because they don't require any shoulder movement."
+      },
+      {
+        "workout": "Pushups",
+        "reps": 15,
+        "reason": "Pushups are a great upper body workout targeting the chest, triceps, and shoulders. They avoid strain on the lower back."
+      }
+    ]
+    Ensure that the JSON is valid. Do not include any extra text or characters outside the array.`;
+    
+    try {
+      const response = await fetch('http://localhost:3000/api/gemini', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      });
 
-        console.log(prompt);
+      const data = await response.json();
+      const rawResponse = data.description;
 
-        const response = await fetch('http://localhost:3000/api/gemini', {
-            body: JSON.stringify({
-                prompt
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST'
-        });
+      // Clean up response by removing potential unwanted characters
+      const cleanedResponse = rawResponse.trim();
 
-        const data = await response.json();
-        const rawWorkout = data.description;
-
-        try {
-            const workout = JSON.parse(rawWorkout);
-            setWorkout(workout);
-        } catch(e) {
-            console.error(e);
-        }
-    };
-
-    useEffect(() => {
-        getWorkout();
-    }, []);
-
-    if (!workout) {
-        return <div>Loading...</div>;
+      // Parse the cleaned JSON response safely
+      const flashcardsArray = JSON.parse(cleanedResponse);
+      setFlashcards(flashcardsArray);
+    } catch (error) {
+      console.error('Error fetching flashcards:', error);
     }
+  };
 
-    return (
-        <div>
-            <h1>Guided</h1>
+  useEffect(() => {
+    getWorkoutFlashcards(); // Fetch flashcards on component mount
+  }, []);
 
-            <br />
-
-            {workout && (
-                <div>
-                    <h2>Workout: {workout.workout}</h2>
-                    <p>Reps: </p>
-                    <input type="number" value={workout.reps} onChange={(e) => {
-                        const reps = parseInt(e.target.value);
-                        setWorkout({
-                            ...workout,
-                            reps
-                        });
-                    }} />
-                    <p>Reason: {workout.reason}</p>
-                    <button onClick={() => {
-                        window.location.href = '/pose?workout=' + workout.workout + '&reps=' + workout.reps;
-                    }}>Continue</button>
-                </div>
-            )}
+  return (
+    <div className="flex flex-wrap justify-center gap-4">
+      {flashcards.map((card, index) => (
+        <div
+          key={index}
+          className="w-64 p-4 border border-gray-400 rounded-md bg-white text-black"
+        >
+          <h2 className="text-xl font-bold mb-2">{card.workout}</h2>
+          <p className="text-md">Reps: {card.reps}</p>
+          <p className="text-sm mt-2">{card.reason}</p>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
-export default Guided;
+export default WorkoutFlashcards;
