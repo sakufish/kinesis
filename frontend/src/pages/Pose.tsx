@@ -1,9 +1,7 @@
 import * as poseDetection from '@tensorflow-models/pose-detection';
 import * as tf from "@tensorflow/tfjs";
 import Webcam from 'react-webcam';
-
 import { useEffect, useRef, useState } from 'react';
-
 import workouts from '../constants/workouts';
 import RepProgressIndicator from '../components/RepProgressIndicator';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
@@ -97,7 +95,10 @@ const Pose = () => {
         }
 
         const diff = middleNum - startNum;
-        return (num - startNum) / diff;
+        const calculatedPercentage = (num - startNum) / diff;
+
+        // Ensuring the percentage stays between 0% and 100%
+        return Math.max(0, Math.min(1, calculatedPercentage));
     }
 
     useEffect(() => {
@@ -105,14 +106,14 @@ const Pose = () => {
             if (!startNum || !middleNum || !isCounting) {
                 return;
             }
-    
+
             getPercentage().then((percentage) => {
                 if (!percentage) {
                     return;
                 }
-    
+
                 setPercentage(percentage);
-    
+
                 if (percentage < workouts[workout].startPercentage && currentPosition === "middle") {
                     setCurrentPosition("start");
                     setCount((prevCount) => prevCount + 1);
@@ -121,69 +122,103 @@ const Pose = () => {
                 }
             });
         }, 10);
-    
+
         return () => clearInterval(interval);
     }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
-    
 
     return (
-        <div>
-            <h1>Pose Detection</h1>
-            <Webcam ref={webcamRef} videoConstraints={{
-                frameRate: { max: 30 },
-            }}/>
+        <div className="flex flex-col items-start pl-32 justify-center min-h-screen p-4 bg-black text-white border">
+            <h1 className="text-3xl font-semibold italic mb-4 text-orange-500">SOLO WORKOUT</h1>
+            <div className="flex items-center justify-start">
+                {/* Webcam */}
+                <div className="mr-8">
+                    <Webcam
+                        ref={webcamRef}
+                        width={320}
+                        height={240}
+                        videoConstraints={{
+                            frameRate: { max: 30 },
+                        }}
+                        className="border-2 border-white rounded-lg"
+                    />
+                </div>
 
-            {isStartingPositionCountdownPlaying && (
-                <CountdownCircleTimer
-                    isPlaying={isStartingPositionCountdownPlaying}
-                    duration={5}
-                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                    colorsTime={[7, 5, 2, 0]}
-                    onComplete={() => {
-                        setStartPosition();
-                        setIsStartingPositionCountdownPlaying(false);
-                        setIsMiddlePositionCountdownPlaying(true);
-                    }}
+                {/* Rep Progress Indicator */}
+                <div className="mr-8">
+                    <RepProgressIndicator
+                        startPercentage={workouts[workout].startPercentage}
+                        middlePercentage={workouts[workout].middlePercentage}
+                        currentPosition={currentPosition}
+                        currentPercentage={percentage}
+                        barColor="orange" // Updated color to orange
+                    />
+                </div>
+
+                {/* Status and Count */}
+                <div>
+                    {/* Calibration/Position Status */}
+                    {isStartingPositionCountdownPlaying && (
+                        <CountdownCircleTimer
+                            isPlaying={isStartingPositionCountdownPlaying}
+                            duration={5}
+                            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                            colorsTime={[7, 5, 2, 0]}
+                            onComplete={() => {
+                                setStartPosition();
+                                setIsStartingPositionCountdownPlaying(false);
+                                setIsMiddlePositionCountdownPlaying(true);
+                            }}
+                        >
+                            {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
+                        </CountdownCircleTimer>
+                    )}
+
+                    {isMiddlePositionCountdownPlaying && (
+                        <CountdownCircleTimer
+                            isPlaying={isMiddlePositionCountdownPlaying}
+                            duration={3}
+                            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                            colorsTime={[7, 5, 2, 0]}
+                            onComplete={() => {
+                                setDownPosition();
+                                setIsMiddlePositionCountdownPlaying(false);
+                                setIsCounting(true); // Automatically start counting after calibration
+                            }}
+                        >
+                            {({ remainingTime }) => <div className="text-center">{remainingTime}</div>}
+                        </CountdownCircleTimer>
+                    )}
+
+                    {!isStartingPositionCountdownPlaying && !isMiddlePositionCountdownPlaying && (
+                        <div className="text-lg mb-4">Calibrated</div>
+                    )}
+
+                    {/* Selected Exercise */}
+                    <div className="text-lg mb-4 text-orange-500">Exercise: {workout}</div>
+
+                    {/* Count */}
+                    <div className="text-4xl font-bold">Count: {count}</div>
+                </div>
+            </div>
+
+            {/* Start Calibration and Counting Buttons */}
+            <div className="mt-8 flex space-x-4">
+                <button
+                    onClick={startCalibration}
+                    className="px-4 py-2 bg-blue-500 rounded hover:bg-blue-600"
                 >
-                    {({ remainingTime }) => remainingTime}
-                </CountdownCircleTimer>
-            )}
+                    Start Calibration
+                </button>
 
-            {isMiddlePositionCountdownPlaying && (
-                <CountdownCircleTimer
-                    isPlaying={isMiddlePositionCountdownPlaying}
-                    duration={3}
-                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                    colorsTime={[7, 5, 2, 0]}
-                    onComplete={() => {
-                        setDownPosition();
-                        setIsMiddlePositionCountdownPlaying(false);
-                    }}
+                <button
+                    onClick={() => setIsCounting((prev) => !prev)}
+                    className="px-4 py-2 bg-green-500 rounded hover:bg-green-600"
                 >
-                    {({ remainingTime }) => remainingTime}
-                </CountdownCircleTimer>
-            )}
-
-            <button onClick={startCalibration}>Start Calibration</button>
-
-            <button onClick={() => {
-                setIsCounting((prevIsCounting) => !prevIsCounting);
-            }}>{isCounting ? "Stop" : "Start"} Counting</button>
-
-            <p>Start Num: {startNum}, Middle Num: {middleNum}</p>
-            <p style={{
-                fontSize: "100px"
-            }} >Count: {count}</p>
-            <p>Current Position: {currentPosition}</p>
-            {percentage && <p>Percentage: {percentage * 100}%</p>}
-            <RepProgressIndicator
-                startPercentage={workouts[workout].startPercentage}
-                middlePercentage={workouts[workout].middlePercentage}
-                currentPosition={currentPosition}
-                currentPercentage={percentage}
-            />
+                    {isCounting ? 'Stop Counting' : 'Start Counting'}
+                </button>
+            </div>
         </div>
-    )
+    );
 }
 
 export default Pose;
