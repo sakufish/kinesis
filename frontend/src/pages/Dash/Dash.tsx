@@ -63,7 +63,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8">
+    <div className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8 font-roboto-condensed">
       <div className="bg-[#241919] text-white p-8 rounded-lg w-[600px] relative">
         <button
           className="absolute top-2 right-2 text-white text-2xl hover:text-red-500"
@@ -72,7 +72,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
           &times;
         </button>
 
-        <h1 className="text-2xl font-medium tracking-wide mb-6 text-center italic">PREFERENCES</h1>
+        <h1 className="text-2xl font-bold tracking-wide mb-6 text-center italic">PREFERENCES</h1>
 
         <h2 className="text-xl font-semibold mb-2 italic">INJURIES</h2>
         <p className="mb-4 italic text-[#888888]">Jimbro3z will help you come up with exercises without influencing injuries. Enter to add.</p>
@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen bg-black text-white relative p-8">
+    <div className="h-screen bg-black text-white relative p-8 font-roboto-condensed">
       <img src={Left} alt="Left Side Graphic" className="absolute top-14 left-0 object-cover w-16 h-auto" />
       <div className="absolute top-32 left-36 w-2/3 z-20">
         <h1 className="text-4xl font-semibold italic leading-snug w-[40rem]">"THE BODY ACHIEVES WHAT THE MIND BELIEVES."</h1>

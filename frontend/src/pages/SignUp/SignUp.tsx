@@ -33,7 +33,7 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-black">
+    <div className="flex flex-col items-center justify-center h-screen bg-black font-roboto-condensed">
       <h1 className="text-white text-5xl font-semibold italic">SIGN UP</h1>
       <h2 className="text-orange-400 text-3xl font-bold mt-6 italic">JIMBRO3Z</h2>
 
