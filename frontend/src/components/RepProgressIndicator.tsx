@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { Stage, Layer, Rect } from 'react-konva';
 
 type RepProgressIndicatorProps = {
