@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import BG from './assets/SOLObg.png';
 
 const Solo: React.FC = () => {
-  const [reps, setReps] = useState<number | ''>(''); 
-  const [selectedOption, setSelectedOption] = useState<string | null>(null); 
+  const [reps, setReps] = useState<number | ''>(''); // State to store the number of reps
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); // State to track selected option (either muscle group or workout)
+  const [method, setMethod] = useState<string>(''); // State to store the method of workout selection
 
-  
+  // Arrays of workout and muscle group options
   const workouts = ['Push Ups', 'Sit Ups', 'Squats', 'Jump Rope', 'Jumping Jacks'];
   const muscleGroups = ['Chest', 'Back', 'Shoulders', 'Arms', 'Legs', 'Glutes'];
 
@@ -32,7 +33,7 @@ const Solo: React.FC = () => {
           <div className="absolute top-1/2 left-0 h-[10%] w-[4px] bg-orange-500 rounded-r-lg opacity-0 group-hover:opacity-100 group-hover:h-[50%] transition-all duration-300 transform -translate-y-1/2"></div>
           <h2 className="text-2xl font-semibold text-[#FF833A] mb-4">GUIDED</h2>
           <p className="text-white mb-4">
-            Select muscle groups you would like to target and effectively train. An AI model will recommend you suggested stretches and exercises based on selections.
+            Select muscle groups you would like to target and effectively train. An ⚡ AI model will recommend you suggested stretches and exercises based on selections.
           </p>
 
           {}
@@ -40,7 +41,10 @@ const Solo: React.FC = () => {
             {muscleGroups.map((group) => (
               <button
                 key={group}
-                onClick={() => setSelectedOption(group)}
+                onClick={() => {
+                  setSelectedOption(group)
+                  setMethod('guided')
+                }}
                 className={`px-4 py-2 bg-transparent border ${
                   selectedOption === group
                     ? 'bg-orange-500 border-orange-500 text-orange-500'
@@ -65,7 +69,10 @@ const Solo: React.FC = () => {
             {workouts.map((workout) => (
               <button
                 key={workout}
-                onClick={() => setSelectedOption(workout)}
+                onClick={() => {
+                  setSelectedOption(workout)
+                  setMethod('manual')
+                }}
                 className={`px-4 py-2 bg-transparent border ${
                   selectedOption === workout
                     ? 'bg-orange-500 border-orange-500 text-orange-500'
@@ -93,7 +100,13 @@ const Solo: React.FC = () => {
 
         {}
         <div className="flex justify-end mt-10 text-center w-[50rem]">
-          <button className="px-8 py-2 bg-[#FF833A] text-black font-bold rounded-lg hover:bg-orange-600 transition duration-300">
+          <button className="px-8 py-2 bg-[#FF833A] text-black font-bold rounded-lg hover:bg-orange-600 transition duration-300" onClick={() => {
+            if (method === 'guided') {
+              window.location.href = '/guided?muscleGroup=' + selectedOption;
+            } else if (method === 'manual' && selectedOption) {
+              window.location.href = `/pose?workout=${selectedOption}&reps=${reps}`;
+            }
+          }}>
             Next <span className='text-xl'>→</span>
           </button>
         </div>

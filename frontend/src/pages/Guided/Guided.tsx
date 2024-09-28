@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Workout from "../../types/Workout";
+import { useSearchParams } from "react-router-dom";
 
 const Guided = () => {
     const [workout, setWorkout] = useState<Workout | null>(null);
 
+    const [searchParams, ] = useSearchParams();
+
     const getWorkout = async () => {
         const response = await fetch('http://localhost:3000/api/gemini', {
             body: JSON.stringify({
-                prompt: `I want to target the following muscle group: ${"Arms"}. I have the following injuries: ${"Ankle"}. Choose a workout from the following: ${"Pushups, Squats, Lunges, Arm Curls"}, and the number of reps, and a reason for why relating it to how it targets the muscle group as well as how it doesn't interfere with the injury. Reps should be a single number. Respond in the following JSON format, without \`\`\`json, etc.:
+                prompt: `I want to target the following muscle group: ${searchParams.get("muscleGroup")}. I have the following injuries: ${searchParams.get("injuries")}. Choose a workout from the following: ${"Pushups, Squats, Sit Ups"}, and the number of reps, and a reason for why relating it to how it targets the muscle group as well as how it doesn't interfere with the injury. Reps should be a single number. Respond in the following JSON format, without \`\`\`json, etc.:
                 {
                     "workout": "Squats",
                     "reps": 10,
@@ -31,10 +34,17 @@ const Guided = () => {
         }
     };
 
+    useEffect(() => {
+        getWorkout();
+    }, []);
+
+    if (!workout) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div>
             <h1>Guided</h1>
-            <button onClick={getWorkout}>Legs</button>
 
             <br />
 
