@@ -5,6 +5,7 @@ import Webcam from 'react-webcam';
 import { useEffect, useRef, useState } from 'react';
 
 import workouts from '../constants/workouts';
+import RepProgressIndicator from '../components/RepProgressIndicator';
 
 const detectorConfig = {
     runtime: 'tfjs',
@@ -82,12 +83,12 @@ const Pose = () => {
             return null;
         }
 
-        const diff = middleNum - startNum;
         const num = await getPosition();
         if (!num) {
             return null;
         }
 
+        const diff = middleNum - startNum;
         return (num - startNum) / diff;
     }
 
@@ -111,7 +112,7 @@ const Pose = () => {
                     setCurrentPosition("middle");
                 }
             });
-        }, 100);
+        }, 10);
     
         return () => clearInterval(interval);
     }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
@@ -139,7 +140,14 @@ const Pose = () => {
                 fontSize: "100px"
             }} >Count: {count}</p>
             <p>Current Position: {currentPosition}</p>
-            {percentage && <p>Percentage: {percentage}</p>}
+            {percentage && <p>Percentage: {percentage * 100}%</p>}
+            <RepProgressIndicator
+                startPercentage={workouts[workout].startPercentage}
+                middlePercentage={workouts[workout].middlePercentage}
+                currentPosition={currentPosition}
+                currentPercentage={percentage}
+                orientation="vertical"
+            />
         </div>
     )
 }
