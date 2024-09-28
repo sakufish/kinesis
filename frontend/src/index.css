@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .shadow-inner-top {
-    box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.5); /* Top inner shadow */
+    box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.5); 
   }
 
 #root {

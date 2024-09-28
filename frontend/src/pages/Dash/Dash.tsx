@@ -70,13 +70,13 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.4, ease: [0.68, -0.55, 0.27, 1.55] }} // Custom ease
+      transition={{ duration: 0.4, ease: [0.68, -0.55, 0.27, 1.55] }} 
     >
       <motion.div
         className="bg-[#241919] text-white p-8 rounded-lg w-[600px] relative"
         initial={{ y: -50 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.4, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.1 }} // Delay added
+        transition={{ duration: 0.4, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.1 }} 
       >
         <button
           className="absolute top-2 right-2 text-white text-2xl hover:text-red-500"
@@ -129,7 +129,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
         </select>
         
         <h2 className="text-xl font-semibold mt-6 mb-2 italic">DETAILS</h2>
-        <p className="mb-4 italic text-[#888888]">Add in details to help Jimbro3z understand your lifestyle.</p>
+        <p className="mb-4 italic text-[#888888]">Add in details to help Kinesis understand your lifestyle.</p>
         <textarea
           value={details}
           onChange={(e) => setDetails(e.target.value)}
@@ -180,13 +180,13 @@ const Dashboard: React.FC = () => {
         className="absolute top-14 left-0 object-cover w-16 h-auto"
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.2 }} // Custom ease with delay
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.2 }} 
       />
       <motion.div
         className="absolute top-32 left-36 w-2/3 z-20"
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.4 }} // Delay added
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.4 }} 
       >
         <h1 className="text-4xl font-semibold italic leading-snug w-[40rem]">"THE BODY ACHIEVES WHAT THE MIND BELIEVES."</h1>
         <h2 className="text-lg mt-2 text-[#FF833A]">- NAPOLEON HILL</h2>
@@ -195,9 +195,9 @@ const Dashboard: React.FC = () => {
         className="absolute top-[300px] left-48 z-20"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.6 }} // Delay added
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.6 }} 
       >
-        {/* SOLO ICON */}
+        {}
         <motion.div
           className="relative flex items-center justify-center cursor-pointer"
           onMouseEnter={() => setHoveredIcon('SOLO')}
@@ -215,7 +215,7 @@ const Dashboard: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* ACHIEVEMENTS ICON */}
+        {}
         <motion.div
           className="relative flex items-center justify-center cursor-pointer"
           onMouseEnter={() => setHoveredIcon('ACHIEVEMENTS')}
@@ -223,7 +223,7 @@ const Dashboard: React.FC = () => {
           whileHover={{ scale: 1.1 }}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.7 }} // Delay added
+          transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.7 }} 
         >
           <div className="absolute top-[-3rem] left-[18rem] transform text-xl font-medium z-20 italic">MY ACHIEVEMENTS</div>
           <div className="mt-[-2rem] absolute w-40 h-40 bg-transparent border-2 border-[#FFB03A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FFB03A] hover:z-30" style={{ left: "7rem" }}>
@@ -235,7 +235,7 @@ const Dashboard: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* DUO ICON */}
+        {}
         <motion.div
           className="relative flex items-center justify-center mt-[-2rem] cursor-pointer"
           onMouseEnter={() => setHoveredIcon('DUO')}
@@ -243,7 +243,7 @@ const Dashboard: React.FC = () => {
           whileHover={{ scale: 1.1 }}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.8 }} // Delay added
+          transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.8 }} 
         >
           <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">DUO</div>
           <div className="w-40 h-40 bg-transparent border-2 border-[#FF833A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FF833A] hover:z-30">
@@ -260,9 +260,9 @@ const Dashboard: React.FC = () => {
         src={BottomRight}
         alt="Bottom Right Graphic"
         className="absolute bottom-0 right-0 w-[25rem] h-auto z-10"
-        initial={{ x: 100, opacity: 0 }}
+        initial={{ x: 100, opacity: 0 }}  
         animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.5 }} // Custom ease with delay
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.5 }} 
       />
       <motion.img
         src={Model}
@@ -271,24 +271,39 @@ const Dashboard: React.FC = () => {
         style={{ maxHeight: '600px', maxWidth: '600px' }}
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.3 }} // Delay added
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.3 }} 
       />
-  <div className="absolute bottom-8 right-12 flex items-end space-x-4 z-20">
-        <motion.div
-          className="flex flex-row space-x-2 items-center cursor-pointer mb-6 mr-6"
-          onClick={() => setIsModalOpen(true)}
-          whileHover={{ rotate: 0 }} // Spin effect only for settings icon
-          transition={{ duration: 0.5 }}
-        >
-          <span className="text-sm italic">Preferences</span>
-          <img src={Preferences} alt="Preferences Icon" className="w-6 hover:rotate-90 transition-all duration-500 h-auto" />
-        </motion.div>
-        <div className="text-right p-4">
-          <span className="block italic">{userName || '@username'}</span>
-          <span className="block text-sm italic font-semibold text-md mb-16">WELCOME BACK</span>
-          <img src={Logo} alt="Kinesis Logo" className="w-48 h-auto mt-4" />
-        </div>
-      </div>
+    <div className="absolute bottom-8 right-12 flex items-end space-x-4 z-20">
+  <motion.div
+    className="flex flex-row space-x-2 items-center cursor-pointer mb-6 mr-6"
+    onClick={() => setIsModalOpen(true)}
+    whileHover={{ rotate: 0 }} 
+    transition={{ duration: 0.5 }}
+  >
+    <span className="text-sm italic">Preferences</span>
+    <img src={Preferences} alt="Preferences Icon" className="w-6 hover:rotate-90 transition-all duration-500 h-auto" />
+  </motion.div>
+  <div className="text-right p-4">
+    <motion.span
+      className="block italic mr-10 text-2xl" 
+      initial={{ y: -10, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      {userName || '@username'}
+    </motion.span>
+    <motion.span
+      className="block text-4xl mr-10 italic font-semibold mb-16" 
+      initial={{ y: -10, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4, delay: 0.1 }} 
+    >
+      WELCOME BACK
+    </motion.span>
+    <img src={Logo} alt="Kinesis Logo" className="w-48 h-auto mt-2 ml-10" />
+  </div>
+</div>
+ 
 
       {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} userId={userId || ''} />}
     </div>

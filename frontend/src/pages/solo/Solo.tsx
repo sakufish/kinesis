@@ -3,11 +3,11 @@ import BG from './assets/SOLObg.png';
 import workouts from '../../constants/workouts';
 
 const Solo: React.FC = () => {
-  const [reps, setReps] = useState<number | ''>(''); // State to store the number of reps
-  const [selectedOption, setSelectedOption] = useState<string | null>(null); // State to track selected option (either muscle group or workout)
-  const [method, setMethod] = useState<string>(''); // State to store the method of workout selection
+  const [reps, setReps] = useState<number | ''>(''); 
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); 
+  const [method, setMethod] = useState<string>(''); 
 
-  // Arrays of workout and muscle group options
+  
   const possbileWorkouts = Object.keys(workouts);
   const muscleGroups = ['Chest', 'Back', 'Shoulders', 'Arms', 'Legs', 'Glutes'];
 

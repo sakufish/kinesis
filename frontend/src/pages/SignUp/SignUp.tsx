@@ -13,7 +13,7 @@ const SignUp: React.FC = () => {
 
   const handleSignUp = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/signup', {
+      const response = await fetch('http://localhost:3000/api/signup/',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ const SignUp: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center h-screen bg-black font-roboto-condensed">
-      {/* Logo */}
+      {}
       <motion.img
         src={KinesisLogo}
         alt="Kinesis Logo"
@@ -46,7 +46,7 @@ const SignUp: React.FC = () => {
         transition={{ duration: 0.8, ease: 'easeInOut' }}
       />
 
-      {/* Sign Up Title */}
+      {}
       <motion.h1
         className="text-white text-5xl font-medium italic"
         initial={{ opacity: 0, y: -50 }}
@@ -56,7 +56,7 @@ const SignUp: React.FC = () => {
         SIGN UP
       </motion.h1>
 
-      {/* Kinesis Title closer to SignUp */}
+      {}
       <motion.h2
         className="text-orange-400 text-3xl font-bold mt-2 italic"
         initial={{ opacity: 0, y: -50 }}
@@ -66,7 +66,7 @@ const SignUp: React.FC = () => {
         KINESIS
       </motion.h2>
 
-      {/* Name Input */}
+      {}
       <motion.input
         className="mt-12 w-64 p-3 text-center text-white border border-[#606060] bg-[#2B191D] placeholder-[#4F494B] focus:outline-none z-10"
         type="text"
@@ -78,7 +78,7 @@ const SignUp: React.FC = () => {
         transition={{ duration: 0.8, ease: 'easeInOut' }}
       />
 
-      {/* Enter Button */}
+      {}
       <motion.button
         onClick={handleSignUp}
         className="mt-4 px-4 py-1 rounded-md text-[#FF833A] border border-[#FF833A] text-sm shadow-[0px_4px_0px_0px_rgba(255,140,0,1)] hover:shadow-none transition duration-200 z-10"
@@ -89,7 +89,7 @@ const SignUp: React.FC = () => {
         ENTER
       </motion.button>
 
-      {/* Left and Right Wings */}
+      {}
       <motion.img
         src={LeftWing}
         alt="Left Wing"
@@ -107,7 +107,7 @@ const SignUp: React.FC = () => {
         transition={{ duration: 0.8, ease: 'easeInOut' }}
       />
 
-      {/* Bottom Glow */}
+      {}
       <img src={BottomGlow} alt="Bottom Glow" className="absolute bottom-0 w-full z-[0]" />
     </div>
   );

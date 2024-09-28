@@ -72,6 +72,8 @@ Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not inc
       });
 
       const workoutPageUrl = `/pose?${queryString}`;
+
+      // Redirect to the workout page
       window.location.href = workoutPageUrl;
 
     } catch (error) {
