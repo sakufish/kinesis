@@ -43,7 +43,7 @@ Use this format for the output:
   }
 ]
 
-Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array. do not include backticks, or anything. Just the array`;
+Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array.`;
 
     try {
       const response = await fetch('http://localhost:3000/api/gemini', {
@@ -73,7 +73,6 @@ Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not inc
 
       const workoutPageUrl = `/pose?${queryString}`;
 
-      // Redirect to the workout page
       window.location.href = workoutPageUrl;
 
     } catch (error) {
