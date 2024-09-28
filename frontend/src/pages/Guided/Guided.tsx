@@ -24,8 +24,8 @@ Adjust the number of reps and rest times according to the desired difficulty lev
 - For "Medium", use moderate reps (15-20) and moderate rest periods (45-60 seconds).
 - For "Hard", use higher reps (20-30) and shorter rest periods (30-45 seconds).
 
-The user has the following injuries: ${userData.injuries.join(",")}. Modify the exercises as necessary to avoid strain on injured areas. 
-The user provided the following additional details: ${userData.details}. After each exercise block, include a rest period based on difficulty.
+The user has the following injuries: ${userData.injuries.join(",")}.If none are listed, ignore. Modify the exercises as necessary to avoid strain on injured areas. 
+The user provided the following additional details: ${userData.details}.If none are listed, ignore. After each exercise block, include a rest period based on difficulty.
 
 ONLY GENERATE ONE WORKOUT PLAN. 
 
@@ -33,17 +33,17 @@ Use this format for the output:
 [
   {
     "workout": "Squats",
-    "reps": 20,
-    "rest": 30
+    "reps": rep_number,
+    "rest": second_count
   },
   {
     "workout": "Pushups",
-    "reps": 15,
-    "rest": 45
+    "reps": rep_number,
+    "rest": second_count
   }
 ]
 
-Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array. do not include backticks`;
+Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array. do not include backticks, or anything. Just the array`;
 
     try {
       const response = await fetch('http://localhost:3000/api/gemini', {
@@ -55,6 +55,7 @@ Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not inc
       });
 
       const data = await response.json();
+      console.log(data.description)
       const rawResponse = data.description;
       const cleanedResponse = rawResponse.trim();
       const workoutLinks: WorkoutLink[] = JSON.parse(cleanedResponse);
