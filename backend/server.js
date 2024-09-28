@@ -1,14 +1,15 @@
 require('dotenv').config();
 
 const geminiRoute = require('./routes/geminiRoute.js');
-const usersRoute = require('./routes/users.js'); // Import the new users route
+const usersRoute = require('./routes/users.js'); 
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
+const app = express();
 app.use(cors());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 const connectDB = async () => {
@@ -24,16 +25,9 @@ const connectDB = async () => {
     }
 };
 
-connectDB();
+//connectDB();
 
-// Use the routes
 app.use('/api', geminiRoute);
-app.use('/api', usersRoute); // Use the users route
+app.use('/api', usersRoute);
 
-app.get('/ping', async (req, res) => {
-    res.send('pong');
-});
-
-app.listen(port, () => {
-    console.log(`Server on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));
