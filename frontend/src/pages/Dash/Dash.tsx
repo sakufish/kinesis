@@ -273,15 +273,15 @@ const Dashboard: React.FC = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.3 }} // Delay added
       />
-      <div className="absolute bottom-8 right-12 flex items-end space-x-4 z-20">
+  <div className="absolute bottom-8 right-12 flex items-end space-x-4 z-20">
         <motion.div
           className="flex flex-row space-x-2 items-center cursor-pointer mb-6 mr-6"
           onClick={() => setIsModalOpen(true)}
-          whileHover={{ rotate: 360 }} // Spin effect
+          whileHover={{ rotate: 0 }} // Spin effect only for settings icon
           transition={{ duration: 0.5 }}
         >
           <span className="text-sm italic">Preferences</span>
-          <img src={Preferences} alt="Preferences Icon" className="w-6 h-auto" />
+          <img src={Preferences} alt="Preferences Icon" className="w-6 hover:rotate-90 transition-all duration-500 h-auto" />
         </motion.div>
         <div className="text-right p-4">
           <span className="block italic">{userName || '@username'}</span>
