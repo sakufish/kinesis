@@ -105,7 +105,7 @@ const Pose = () => {
                 await setDownPosition();
             }}>Calibrate Down</button>
             <p>Up Y: {upY}, Down Y: {downY}</p>
-            <p>Percentage: {percentage}%</p>
+            {percentage && <p>Percentage: {percentage * 100}%   </p>}
         </div>
     )
 }
