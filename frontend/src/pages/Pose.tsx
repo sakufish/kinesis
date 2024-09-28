@@ -8,6 +8,10 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { useSearchParams } from 'react-router-dom';
 import ReactConfetti from 'react-confetti';
 
+import frame from './workout/assets/frame.png'; // Importing the frame image
+import calibrate from './workout/assets/calibrate.svg'; // Importing icons
+import CountICON from './workout/assets/count.svg';
+
 const detectorConfig = {
     runtime: 'tfjs',
     modelType: 'SinglePose.Lightning',
@@ -16,11 +20,10 @@ const detectorConfig = {
 
 const Pose = () => {
     const [detector, setDetector] = useState<poseDetection.PoseDetector | null>(null);
-
-
+    
+    // Get workout and reps from searchParams
     const [searchParams, setSearchParams] = useSearchParams();
-    // const [workout, setWorkout] = useState(searchParams.get("workout") || "Pushups");
-    const [workout, setWorkout] = useState("Pushups");
+    const [workout, setWorkout] = useState(searchParams.get("workout") || "Pushups");
     const [reps, setReps] = useState<number>(searchParams.has("reps") ? parseInt(searchParams.get("reps")!) : 10);
 
     const [startNum, setStartNum] = useState<number | null>(null);
@@ -139,41 +142,69 @@ const Pose = () => {
     }, [count, reps]);
 
     return (
-        <div className="flex flex-col items-start pl-32 justify-center min-h-screen p-4 bg-black text-white border">
-            { count === reps && <ReactConfetti colors={[
-                "#004777",
-                "#F7B801",
-                "#A30000",
-            ]} recycle={false} numberOfPieces={500} />}
+        <div className="flex flex-col items-start pl-32 justify-center min-h-screen p-4 bg-black text-white">
+            {count === reps && <ReactConfetti colors={["#004777", "#F7B801", "#A30000"]} recycle={false} numberOfPieces={500} />}
+            
             <h1 className="text-3xl font-semibold italic mb-4 text-orange-500">SOLO WORKOUT</h1>
-            <div className="flex items-center justify-start">
-                {}
-                <div className="mr-8">
+            
+            <div className="flex items-center justify-center relative">
+                
+                {/* Frame Image Larger than Webcam */}
+                <div className="flex flex-col justify-center items-center relative w-[30rem] h-full">
+                    {/* Frame */}
+                    <div className="absolute top-0 left-0 transform z-10">
+                        <img
+                            src={frame}
+                            alt="Frame"
+                            className="w-full h-auto" // Larger dimensions for the frame
+                        />
+                    </div>
+
+                    {/* Webcam */}
                     <Webcam
                         ref={webcamRef}
-                        width={320}
-                        height={240}
+                        width={450}
+                        height={0}
                         videoConstraints={{
                             frameRate: { max: 30 },
                         }}
-                        className="border-2 border-white rounded-lg"
+                        className="rounded-md relative z-20 mt-4" // Positioned within the larger frame
                     />
+
+                    {/* Buttons */}
+                    <div className="mt-8 flex space-x-4 z-10">
+                        <button
+                            onClick={startCalibration}
+                            className="flex flex-row justify-center items-center"
+                        >
+                            <img src={calibrate} alt="Calibrate" className='w-4 h-auto mr-1' />
+                            Start Calibration
+                        </button>
+
+                        <button
+                            onClick={() => setIsCounting((prev) => !prev)}
+                            className="flex flex-row justify-center items-center"
+                        >                            
+                            <img src={CountICON} alt="Count" className='w-4 h-auto mr-1'/>
+                            {isCounting ? 'Stop Counting' : 'Start Counting'}
+                        </button>
+                    </div>
                 </div>
 
-                {}
-                <div className="mr-8">
+                {/* Rep Progress Indicator */}
+                <div className="ml-8">
                     <RepProgressIndicator
                         startPercentage={workouts[workout].startPercentage}
                         middlePercentage={workouts[workout].middlePercentage}
                         currentPosition={currentPosition}
                         currentPercentage={percentage}
-                        barColor="orange" // Updated color to orange
+                        barColor="orange"
                     />
                 </div>
 
-                {}
-                <div>
-                    {}
+                {/* Status and Count */}
+                <div className="ml-8">
+                    {/* Calibration/Position Status */}
                     {isStartingPositionCountdownPlaying && (
                         <CountdownCircleTimer
                             isPlaying={isStartingPositionCountdownPlaying}
@@ -210,29 +241,12 @@ const Pose = () => {
                         <div className="text-lg mb-4">Calibrated</div>
                     )}
 
-                    {}
-                    { searchParams.has("workout") && <div className="text-lg mb-4 text-orange-500">Exercise: {searchParams.get("workout")}</div> }
+                    {/* Selected Exercise */}
+                    <div className="text-lg mb-4 text-orange-500">Exercise: {workout}</div>
 
-                    {}
-                    <div className="text-4xl font-bold">Count: {count} {`/ ${reps}`}</div>
+                    {/* Count */}
+                    <div className="text-4xl font-bold">Count: {count} / {reps}</div>
                 </div>
-            </div>
-
-            {}
-            <div className="mt-8 flex space-x-4">
-                <button
-                    onClick={startCalibration}
-                    className="px-4 py-2 bg-blue-500 rounded hover:bg-blue-600"
-                >
-                    Start Calibration
-                </button>
-
-                <button
-                    onClick={() => setIsCounting((prev) => !prev)}
-                    className="px-4 py-2 bg-green-500 rounded hover:bg-green-600"
-                >
-                    {isCounting ? 'Stop Counting' : 'Start Counting'}
-                </button>
             </div>
         </div>
     );
