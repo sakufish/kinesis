@@ -37,7 +37,10 @@ const Pose = () => {
                 flipHorizontal: false,
                 scoreThreshold: 0.3
             });
-            return poses;
+
+            if (poses.length > 0) {
+                return poses;
+            }
         }
         return null;
     }
