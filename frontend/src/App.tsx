@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import login from './components/login/login'
-import Home from './components/Home';
-import Pose from './components/Pose';
+import SignUp from './pages/SignUp/SignUp';
+import Home from './pages/Home';
+import Pose from './pages/Pose';
 
 const App = () => {
   return (
@@ -9,6 +9,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/pose" element={<Pose />} />
+        <Route path="/signup" element = {<SignUp />} />
       </Routes>
     </Router>
   );

@@ -15,7 +15,7 @@ const Box: React.FC = () => {
 
 const Home: React.FC = () => {
   return (
-    <Canvas className='min-w-screen'>
+    <Canvas className=''>
       <Suspense fallback={null}>
         {/* Add ambient lighting */}
         <ambientLight intensity={0.5} />
