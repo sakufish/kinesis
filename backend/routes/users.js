@@ -5,11 +5,9 @@ const { v4: uuidv4 } = require('uuid');
 
 router.post('/signup', async (req, res) => {
   const { name } = req.body;
-
   if (!name) {
     return res.status(400).json({ error: 'Name is required' });
   }
-
   try {
     const userId = uuidv4();
     const newUser = new User({ name, userId });
@@ -24,7 +22,25 @@ router.get('/user/:userId', async (req, res) => {
   try {
     const user = await User.findOne({ userId: req.params.userId });
     if (user) {
-      res.json({ name: user.name });
+      res.json(user);
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.put('/user/:userId/preferences', async (req, res) => {
+  const { injuries, difficulty, details } = req.body;
+  try {
+    const user = await User.findOneAndUpdate(
+      { userId: req.params.userId },
+      { injuries, difficulty, details },
+      { new: true }
+    );
+    if (user) {
+      res.json(user);
     } else {
       res.status(404).json({ error: 'User not found' });
     }
