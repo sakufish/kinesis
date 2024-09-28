@@ -17,17 +17,18 @@ const WorkoutRedirect: React.FC = () => {
     const userResponse = await fetch(`http://localhost:3000/api/user/${userId}`);
     const userData = await userResponse.json();
 
-    const prompt = `Generate five workout flashcards targeting the ${muscleGroup} muscle group, out of only these exercises: ${Object.keys(workouts).join(", ")}. The user has these injuries: ${userData.injuries}, wants the difficulty to be ${userData.difficulty}, and has these additional details: ${userData.details}. Generate based on ALL THESE FACTORS. Higher reps for higher difficulties, preferences. After each exercise block, add rest periods of varying time.
+    const prompt = `Generate five workout flashcards targeting ${muscleGroup} using only these exercises: ${Object.keys(workouts).join(", ")}. If ${userData.difficulty} is easy, below 10 reps, if medium, below 18 reps, if hard, below 30 reps. More reps for higher difficulty.
+The user has these additional details: ${userData.details}. After each exercise block, add rest periods of varying time based on difficulty. The user has the following injuries: ${userData.injuries.join(",")}
 in this format:
 [
   {
     "workout": "Squats",
-    "reps": 10
+    "reps": 20
   },
   {
     "workout": "Pushups",
-    "reps": 15,
-    "rest": 60
+    "reps": 20,
+    "rest": 30
   }
 ]
 Ensure that the JSON is valid and the workouts are appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array.`;
@@ -42,7 +43,7 @@ Ensure that the JSON is valid and the workouts are appropriate for the ${muscleG
         },
         body: JSON.stringify({ prompt }),
       });
-
+      console.log(response)
       const data = await response.json();
       const rawResponse = data.description;
       const cleanedResponse = rawResponse.trim();
