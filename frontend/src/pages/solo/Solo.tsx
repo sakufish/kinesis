@@ -13,7 +13,7 @@ const Solo: React.FC = () => {
 
   return (
     <div
-      className="relative h-screen text-white p-8 flex items-center justify-center"
+      className="relative h-screen text-white p-8 flex items-center justify-center font-roboto-condensed"
       style={{
         backgroundImage: `url(${BG})`,
         backgroundSize: 'cover',
