@@ -79,6 +79,12 @@ const Pose = () => {
 
         const workoutConfig = workouts[workout];
         const num = workoutConfig.function(poses[0]);
+        const postureStatus = workoutConfig.postureFunction(poses[0]);
+
+        // if (postureStatus.status === "bad") {
+        //     console.log(postureStatus.message);
+        // }
+
         return num;
     };
 
@@ -136,7 +142,7 @@ const Pose = () => {
                     setCurrentPosition("middle");
                 }
             });
-        }, 10);
+        }, 100);
 
         return () => clearInterval(interval);
     }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
