@@ -9,14 +9,19 @@ const Guided = () => {
     const [searchParams, ] = useSearchParams();
 
     const getWorkout = async () => {
+        const prompt =  `I want to target the following muscle group: ${searchParams.get("muscleGroup")}. I have the following injuries: ${searchParams.get("injuries")}. Choose a workout from the following: ${Object.keys(workouts).join(", ")}, and the number of reps, and a reason for why relating it to how it targets the muscle group as well as how it doesn't interfere with the injury. Reps should be a single number. Respond in the following JSON format, without \`\`\`json, etc.:
+        {
+            "workout": "Squats",
+            "reps": 10,
+            "reason": "Squats are a great workout for the legs because they target the quads, hamstrings, and glutes. They don't interfere with your shoulder injury because they don't require any shoulder movement. 10 reps is a good starting point for beginners."
+        }
+            IF THERE AREN'T ANY WORKOUTS THAT FIT THE CRITERIA, JUST RESPOND WITH PUSHUPS.`;
+
+        console.log(prompt);
+
         const response = await fetch('http://localhost:3000/api/gemini', {
             body: JSON.stringify({
-                prompt: `I want to target the following muscle group: ${searchParams.get("muscleGroup")}. I have the following injuries: ${searchParams.get("injuries")}. Choose a workout from the following: ${Object.keys(workouts).join(", ")}, and the number of reps, and a reason for why relating it to how it targets the muscle group as well as how it doesn't interfere with the injury. Reps should be a single number. Respond in the following JSON format, without \`\`\`json, etc.:
-                {
-                    "workout": "Squats",
-                    "reps": 10,
-                    "reason": "Squats are a great workout for the legs because they target the quads, hamstrings, and glutes. They don't interfere with your shoulder injury because they don't require any shoulder movement. 10 reps is a good starting point for beginners."
-                }`
+                prompt
             }),
             headers: {
                 'Content-Type': 'application/json'

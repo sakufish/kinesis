@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BG from './assets/SOLObg.png';
+import workouts from '../../constants/workouts';
 
 const Solo: React.FC = () => {
   const [reps, setReps] = useState<number | ''>(''); // State to store the number of reps
@@ -7,7 +8,7 @@ const Solo: React.FC = () => {
   const [method, setMethod] = useState<string>(''); // State to store the method of workout selection
 
   // Arrays of workout and muscle group options
-  const workouts = ['Push Ups', 'Sit Ups', 'Squats', 'Jump Rope', 'Jumping Jacks'];
+  const possbileWorkouts = Object.keys(workouts);
   const muscleGroups = ['Chest', 'Back', 'Shoulders', 'Arms', 'Legs', 'Glutes'];
 
   return (
@@ -66,7 +67,7 @@ const Solo: React.FC = () => {
 
           {}
           <div className="flex space-x-4 overflow-x-auto whitespace-nowrap">
-            {workouts.map((workout) => (
+            {possbileWorkouts.map((workout) => (
               <button
                 key={workout}
                 onClick={() => {
