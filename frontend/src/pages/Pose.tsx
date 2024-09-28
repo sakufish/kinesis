@@ -133,7 +133,7 @@ const Pose = () => {
         <div className="flex flex-col items-start pl-32 justify-center min-h-screen p-4 bg-black text-white border">
             <h1 className="text-3xl font-semibold italic mb-4 text-orange-500">SOLO WORKOUT</h1>
             <div className="flex items-center justify-start">
-                {/* Webcam */}
+                {}
                 <div className="mr-8">
                     <Webcam
                         ref={webcamRef}
@@ -146,7 +146,7 @@ const Pose = () => {
                     />
                 </div>
 
-                {/* Rep Progress Indicator */}
+                {}
                 <div className="mr-8">
                     <RepProgressIndicator
                         startPercentage={workouts[workout].startPercentage}
@@ -157,9 +157,9 @@ const Pose = () => {
                     />
                 </div>
 
-                {/* Status and Count */}
+                {}
                 <div>
-                    {/* Calibration/Position Status */}
+                    {}
                     {isStartingPositionCountdownPlaying && (
                         <CountdownCircleTimer
                             isPlaying={isStartingPositionCountdownPlaying}
@@ -196,15 +196,15 @@ const Pose = () => {
                         <div className="text-lg mb-4">Calibrated</div>
                     )}
 
-                    {/* Selected Exercise */}
+                    {}
                     { searchParams.has("workout") && <div className="text-lg mb-4 text-orange-500">Exercise: {searchParams.get("workout")}</div> }
 
-                    {/* Count */}
+                    {}
                     <div className="text-4xl font-bold">Count: {count} {searchParams.has("reps") ? `out of ${searchParams.get("reps")}`: ""}</div>
                 </div>
             </div>
 
-            {/* Start Calibration and Counting Buttons */}
+            {}
             <div className="mt-8 flex space-x-4">
                 <button
                     onClick={startCalibration}

@@ -19,24 +19,24 @@ const Solo: React.FC = () => {
         backgroundPosition: 'center',
       }}
     >
-      {/* Black Overlay */}
+      {}
       <div className="absolute inset-0 bg-black opacity-85 z-0"></div>
 
-      {/* Content */}
+      {}
       <div className="relative z-10 w-full max-w-2xl">
-        {/* Title */}
+        {}
         <h1 className="text-white text-5xl font-bold italic mb-10 text-center">GEAR UP...</h1>
 
-        {/* First Section */}
+        {}
         <div className="group relative p-6 mt-10 bg-transparent hover:bg-[#1E1E1E] rounded-lg transition duration-300 mx-auto">
-          {/* Orange Bar - Growing effect */}
+          {}
           <div className="absolute top-1/2 left-0 h-[10%] w-[4px] bg-orange-500 rounded-r-lg opacity-0 group-hover:opacity-100 group-hover:h-[50%] transition-all duration-300 transform -translate-y-1/2"></div>
           <h2 className="text-2xl font-semibold text-[#FF833A] mb-4">GUIDED</h2>
           <p className="text-white mb-4">
             Select muscle groups you would like to target and effectively train. An AI model will recommend you suggested stretches and exercises based on selections.
           </p>
 
-          {/* Muscle Group Options */}
+          {}
           <div className="flex space-x-4 overflow-x-auto whitespace-nowrap">
             {muscleGroups.map((group) => (
               <button
@@ -57,14 +57,14 @@ const Solo: React.FC = () => {
           </div>
         </div>
 
-        {/* Second Section */}
+        {}
         <div className="group relative p-6 mt-10 bg-transparent hover:bg-[#1E1E1E] rounded-lg transition duration-300 mx-auto">
-          {/* Orange Bar - Growing effect */}
+          {}
           <div className="absolute top-1/2 left-0 h-[10%] w-[4px] bg-orange-500 rounded-r-lg opacity-0 group-hover:opacity-100 group-hover:h-[50%] transition-all duration-300 transform -translate-y-1/2"></div>
           <h2 className="text-2xl font-bold text-[#FF833A] mb-4">Enter Manually</h2>
           <p className="text-white mb-4">Enter what workout, exercise, or stretch you would like to do. Monitor your form and reps alongside.</p>
 
-          {/* Workout Options */}
+          {}
           <div className="flex space-x-4 overflow-x-auto whitespace-nowrap">
             {workouts.map((workout) => (
               <button
@@ -84,7 +84,7 @@ const Solo: React.FC = () => {
             ))}
           </div>
 
-          {/* Reps Input */}
+          {}
           <div className="mt-6">
             <label htmlFor="reps" className="text-white font-thin text-md">Reps:</label>
             <input
@@ -98,7 +98,7 @@ const Solo: React.FC = () => {
           </div>
         </div>
 
-        {/* Next Button */}
+        {}
         <div className="flex justify-end mt-10 text-center w-[50rem]">
           <button className="px-8 py-2 bg-[#FF833A] text-black font-bold rounded-lg hover:bg-orange-600 transition duration-300" onClick={() => {
             if (method === 'guided') {

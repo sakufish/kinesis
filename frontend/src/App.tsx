@@ -5,8 +5,8 @@ import Home from './pages/Home';
 import Pose from './pages/Pose';
 import Dash from './pages/Dash/Dash';
 import Solo from './pages/solo/Solo';
-// import Achievement from './pages/Achievements/Achievements';
-// import Workout from './pages/workout/workout';
+
+
 import Guided from './pages/Guided/Guided';
 
 const App = () => {
