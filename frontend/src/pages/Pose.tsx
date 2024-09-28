@@ -177,12 +177,7 @@ const Pose = () => {
                     const majorityPosture = badCount > goodCount ? "bad" : "good";
                     const majorityMessage = postureMeasurements.find(p => p.status === majorityPosture)?.message || "";
 
-                    console.log({ status: majorityPosture, message: majorityMessage });
-
-                    
-
                     if (majorityPosture === "bad" && currentPosturePosition === "good") {
-                        console.log("bad");
                         setCurrentPosturePosition("bad");
                         const msg = new SpeechSynthesisUtterance(majorityMessage);
                         msg.lang = 'en-US';
