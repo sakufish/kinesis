@@ -56,6 +56,8 @@ const Pose = () => {
         .catch(() => window.alert("Failed to load webgl"));
     }, []);
 
+    const ttsVoice = window.speechSynthesis.getVoices()[92];
+
     const getPoses = async () => {
         if (detector && webcamRef.current && webcamRef.current.video) {
             const webcam = webcamRef.current.video;
@@ -181,12 +183,14 @@ const Pose = () => {
                         setCurrentPosturePosition("bad");
                         const msg = new SpeechSynthesisUtterance(majorityMessage);
                         msg.lang = 'en-US';
+                        msg.voice = ttsVoice;
                         msg.rate = 1.5;
                         window.speechSynthesis.speak(msg);
                     } else if (majorityPosture === "good" && currentPosturePosition === "bad") {
                         setCurrentPosturePosition("good");
                         const msg = new SpeechSynthesisUtterance("Good job!");
                         msg.lang = 'en-US';
+                        msg.voice = ttsVoice;
                         msg.rate = 1.5;
                         window.speechSynthesis.speak(msg);
                     }
