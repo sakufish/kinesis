@@ -119,8 +119,6 @@ const workouts: {
 
             const hipShoulderAngle = getAngle({ x: avgHip.x, y: 0 }, avgHip, avgShoulder, flipped);
 
-            console.log(hipShoulderAngle);
-
             if (hipShoulderAngle < 330) {
                 return {
                     status: "bad",
