@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Left from './assets/left.png';
 import BottomRight from './assets/bottomRight.png';
 import Preferences from './assets/settings.png';
@@ -11,13 +12,13 @@ import DuoHover from './assets/DUO_hover.png';
 import Achievement from './assets/Achievement.png';
 import AchievementHover from './assets/Achievement_hover.png';
 import Model from './assets/model.png';
-import Logo from './assets/KinesisText.png'
+import Logo from './assets/KinesisText.png';
 
 const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, userId }) => {
   const [injuries, setInjuries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [difficulty, setDifficulty] = useState<string>('Medium');
-  const [details, setDetails] = useState<string>(''); 
+  const [details, setDetails] = useState<string>('');
 
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -40,7 +41,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
   const handleAddInjury = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputValue.trim()) {
       setInjuries((prevInjuries) => [...prevInjuries, inputValue.trim()]);
-      setInputValue(''); 
+      setInputValue('');
     }
   };
 
@@ -64,8 +65,19 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8 font-roboto-condensed">
-      <div className="bg-[#241919] text-white p-8 rounded-lg w-[600px] relative">
+    <motion.div
+      className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8 font-roboto-condensed"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: [0.68, -0.55, 0.27, 1.55] }} // Custom ease
+    >
+      <motion.div
+        className="bg-[#241919] text-white p-8 rounded-lg w-[600px] relative"
+        initial={{ y: -50 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.4, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.1 }} // Delay added
+      >
         <button
           className="absolute top-2 right-2 text-white text-2xl hover:text-red-500"
           onClick={onClose}
@@ -115,6 +127,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
           <option value="Medium">Medium</option>
           <option value="Hard">Hard</option>
         </select>
+        
         <h2 className="text-xl font-semibold mt-6 mb-2 italic">DETAILS</h2>
         <p className="mb-4 italic text-[#888888]">Add in details to help Jimbro3z understand your lifestyle.</p>
         <textarea
@@ -128,8 +141,8 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
         <button onClick={handleSavePreferences} className="mt-6 w-full py-2 bg-orange-500 text-white rounded">
           Save Preferences
         </button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -161,17 +174,36 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="h-screen bg-black text-white relative p-8 font-roboto-condensed">
-      <img src={Left} alt="Left Side Graphic" className="absolute top-14 left-0 object-cover w-16 h-auto" />
-      <div className="absolute top-32 left-36 w-2/3 z-20">
+      <motion.img
+        src={Left}
+        alt="Left Side Graphic"
+        className="absolute top-14 left-0 object-cover w-16 h-auto"
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.2 }} // Custom ease with delay
+      />
+      <motion.div
+        className="absolute top-32 left-36 w-2/3 z-20"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.4 }} // Delay added
+      >
         <h1 className="text-4xl font-semibold italic leading-snug w-[40rem]">"THE BODY ACHIEVES WHAT THE MIND BELIEVES."</h1>
         <h2 className="text-lg mt-2 text-[#FF833A]">- NAPOLEON HILL</h2>
-      </div>
-      <div className="absolute top-[300px] left-48 z-20">
-        <div
+      </motion.div>
+      <motion.div
+        className="absolute top-[300px] left-48 z-20"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.6 }} // Delay added
+      >
+        {/* SOLO ICON */}
+        <motion.div
           className="relative flex items-center justify-center cursor-pointer"
           onMouseEnter={() => setHoveredIcon('SOLO')}
           onMouseLeave={() => setHoveredIcon(null)}
           onClick={() => navigate('/solo')}
+          whileHover={{ scale: 1.1 }}
         >
           <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">SOLO</div>
           <div className="w-40 h-40 bg-transparent border-2 border-[#FF3A3A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FF3A3A] hover:z-30">
@@ -181,11 +213,17 @@ const Dashboard: React.FC = () => {
               className="w-12 h-auto"
             />
           </div>
-        </div>
-        <div
+        </motion.div>
+
+        {/* ACHIEVEMENTS ICON */}
+        <motion.div
           className="relative flex items-center justify-center cursor-pointer"
           onMouseEnter={() => setHoveredIcon('ACHIEVEMENTS')}
           onMouseLeave={() => setHoveredIcon(null)}
+          whileHover={{ scale: 1.1 }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.7 }} // Delay added
         >
           <div className="absolute top-[-3rem] left-[18rem] transform text-xl font-medium z-20 italic">MY ACHIEVEMENTS</div>
           <div className="mt-[-2rem] absolute w-40 h-40 bg-transparent border-2 border-[#FFB03A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FFB03A] hover:z-30" style={{ left: "7rem" }}>
@@ -195,11 +233,17 @@ const Dashboard: React.FC = () => {
               className="w-12 h-auto"
             />
           </div>
-        </div>
-        <div
+        </motion.div>
+
+        {/* DUO ICON */}
+        <motion.div
           className="relative flex items-center justify-center mt-[-2rem] cursor-pointer"
           onMouseEnter={() => setHoveredIcon('DUO')}
           onMouseLeave={() => setHoveredIcon(null)}
+          whileHover={{ scale: 1.1 }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.8 }} // Delay added
         >
           <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">DUO</div>
           <div className="w-40 h-40 bg-transparent border-2 border-[#FF833A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FF833A] hover:z-30">
@@ -209,21 +253,37 @@ const Dashboard: React.FC = () => {
               className="w-16 h-auto"
             />
           </div>
-        </div>
-      </div>
-      <img src={BottomRight} alt="Bottom Right Graphic" className="absolute bottom-0 right-0 w-[25rem] h-auto z-10" />
-      <img src={Model} alt="Model" className="absolute top-0 right-20 z-30" style={{ maxHeight: '600px', maxWidth: '600px' }} />
+        </motion.div>
+      </motion.div>
+
+      <motion.img
+        src={BottomRight}
+        alt="Bottom Right Graphic"
+        className="absolute bottom-0 right-0 w-[25rem] h-auto z-10"
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.5 }} // Custom ease with delay
+      />
+      <motion.img
+        src={Model}
+        alt="Model"
+        className="absolute top-0 right-20 z-30"
+        style={{ maxHeight: '600px', maxWidth: '600px' }}
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.3 }} // Delay added
+      />
       <div className="absolute bottom-8 right-12 flex items-end space-x-4 z-20">
-        {/* Welcome Back and Kinesis Logo */}
-        {/* Preferences aligned to the left of the logo */}
-        <div
+        <motion.div
           className="flex flex-row space-x-2 items-center cursor-pointer mb-6 mr-6"
           onClick={() => setIsModalOpen(true)}
+          whileHover={{ rotate: 360 }} // Spin effect
+          transition={{ duration: 0.5 }}
         >
           <span className="text-sm italic">Preferences</span>
           <img src={Preferences} alt="Preferences Icon" className="w-6 h-auto" />
-        </div>
-        <div className="text-right  p-4">
+        </motion.div>
+        <div className="text-right p-4">
           <span className="block italic">{userName || '@username'}</span>
           <span className="block text-sm italic font-semibold text-md mb-16">WELCOME BACK</span>
           <img src={Logo} alt="Kinesis Logo" className="w-48 h-auto mt-4" />
