@@ -93,7 +93,8 @@ const Solo: React.FC = () => {
               type="number"
               value={reps}
               onChange={(e) => setReps(parseInt(e.target.value))}
-              placeholder="0"
+              defaultValue={1}
+              min={1}
               className="ml-4 px-4 py-2 w-20 bg-[#2B191D] text-white rounded-md focus:outline-none transition duration-200"
             />
           </div>
