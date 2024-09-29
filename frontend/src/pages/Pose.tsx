@@ -45,7 +45,7 @@ const Pose = () => {
     const [isStartingPositionCountdownPlaying, setIsStartingPositionCountdownPlaying] = useState(false);
     const [isMiddlePositionCountdownPlaying, setIsMiddlePositionCountdownPlaying] = useState(false);
 
-    const [showSkeleton, setShowSkeleton] = useState(true);
+    const [showSkeleton, setShowSkeleton] = useState(false);
     const [pose, setPose] = useState<poseDetection.Pose | null>(null);
 
     const webcamRef = useRef<Webcam>(null);
