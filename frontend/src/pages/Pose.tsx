@@ -5,13 +5,15 @@ import { useEffect, useRef, useState } from 'react';
 import workouts from '../constants/workouts';
 import RepProgressIndicator from '../components/RepProgressIndicator';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import ReactConfetti from 'react-confetti';
 
 import frame from './workout/assets/frame.png';
 import calibrate from './workout/assets/calibrate.svg';
 import CountICON from './workout/assets/count.svg';
 import Konva from 'konva';
+import home from './Achievements/assets/home.png';
+
 import { Circle, Layer, Line, Stage } from 'react-konva';
 
 const detectorConfig = {
@@ -263,6 +265,11 @@ const Pose = () => {
 
     return (
         <div className="flex min-h-screen p-4 bg-black justify-center items-center text-white relative">
+            <div className='absolute z-10 w-8 h-auto top-6 left-6'>
+                <Link to="/dash">
+                    <img src={home} alt="home icon" className='cursor-pointer'/>
+                </Link>
+            </div>
             {count >= reps && !isResting && <ReactConfetti colors={["#004777", "#F7B801", "#A30000"]} recycle={false} numberOfPieces={500} />}
             
             {isResting ? (

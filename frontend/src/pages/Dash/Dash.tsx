@@ -173,7 +173,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen bg-black text-white relative p-8">
+    <div className="h-screen bg-black text-white relative p-8 overflow-x-hidden">
       <motion.img
         src={Left}
         alt="Left Side Graphic"
@@ -241,11 +241,12 @@ const Dashboard: React.FC = () => {
           className="relative flex items-center justify-center mt-[-2rem] cursor-pointer"
           onMouseEnter={() => setHoveredIcon('DUO')}
           onMouseLeave={() => setHoveredIcon(null)}
+          onClick={() => navigate("/chat")}
           whileHover={{ scale: 1.1, zIndex: 10 }}
           initial={{ scale: 0, zIndex: 1 }}
           animate={{ scale: 1, zIndex: hoveredIcon === 'DUO' ? 10 : 1 }}
         >
-          <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">DUO</div>
+          <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">SOCIAL</div>
           <div className="w-40 h-40 bg-transparent border-2 border-[#FF833A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FF833A] hover:z-30">
             <img
               src={hoveredIcon === 'DUO' ? DuoHover : Duo}
@@ -290,7 +291,7 @@ const Dashboard: React.FC = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      {userName || '@username'}
+      {'@' + userName || '@username'}
     </motion.span>
     <motion.span
       className="block text-4xl mr-10 italic font-semibold mb-16" 
