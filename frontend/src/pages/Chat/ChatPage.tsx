@@ -31,7 +31,6 @@ const ChatPage: React.FC = () => {
     const [senderName, setSenderName] = useState<string>('');
     const [isShrinking, setIsShrinking] = useState<boolean>(false);
 
-    // Reference to the last message div
     const bottomRef = useRef<HTMLDivElement | null>(null);
 
     const fetchContacts = async () => {
@@ -39,7 +38,20 @@ const ChatPage: React.FC = () => {
             const response = await axios.get(`http://localhost:3000/api/user/${userId}`);
             const user = response.data;
             if (user && user.chats) {
-                setContacts(user.chats);
+                const updatedContacts = await Promise.all(
+                    user.chats.map(async (contact: Contact) => {
+                        const messageResponse = await axios.get(`http://localhost:3000/api/chat/${userId}/${contact.recipientId}`);
+                        const messages: Message[] = messageResponse.data;
+                        const lastMessage = messages[messages.length - 1];
+                        
+                        return {
+                            ...contact,
+                            lastMessage: lastMessage ? `${lastMessage.sender === userId ? senderName : lastMessage.sender}: ${lastMessage.message}` : 'No messages yet',
+                            lastMessageTime: lastMessage ? lastMessage.timestamp : new Date().toISOString(),
+                        };
+                    })
+                );
+                setContacts(updatedContacts);
             }
         } catch (error) {
             console.error('Error fetching contacts:', error);
@@ -53,14 +65,12 @@ const ChatPage: React.FC = () => {
             const fetchedMessages: Message[] = response.data;
             setMessages(fetchedMessages);
 
-            // Update the contact with the last message (whether from you or the contact)
             const lastMessage = fetchedMessages[fetchedMessages.length - 1];
             if (lastMessage) {
-                const lastMessageSender = lastMessage.sender === senderName ? "me" : lastMessage.sender;
+                const lastMessageSender = lastMessage.sender === userId ? senderName : lastMessage.sender;
                 const formattedMessage = `${lastMessageSender}: ${lastMessage.message}`;
                 const lastMessageTime = lastMessage.timestamp;
                 
-                // Update the contact with the last message and time
                 updateContact(recipientId, formattedMessage, lastMessageTime);
             }
         } catch (error) {
@@ -74,12 +84,10 @@ const ChatPage: React.FC = () => {
             const timestamp = new Date().toISOString();
             await axios.post(`http://localhost:3000/api/chat/${userId}/${recipientId}/message`, { message, timestamp });
             
-            // Update the messages and clear input
             setMessage('');
             fetchMessages();
 
-            // Update contacts with the last message and timestamp
-            const formattedMessage = `me: ${message}`;
+            const formattedMessage = `${senderName}: ${message}`;
             updateContact(recipientId, formattedMessage, timestamp);
         } catch (error) {
             console.error('Error sending message:', error);
@@ -115,7 +123,6 @@ const ChatPage: React.FC = () => {
         );
     };
 
-    // Scroll to the bottom of the chat when messages change or a DM is opened
     useEffect(() => {
         if (bottomRef.current) {
             bottomRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -124,7 +131,9 @@ const ChatPage: React.FC = () => {
 
     useEffect(() => {
         fetchSenderName();
-        fetchContacts();
+        fetchContacts(); 
+        const contactInterval = setInterval(fetchContacts, 2000); 
+        return () => clearInterval(contactInterval);
     }, [userId]);
 
     useEffect(() => {
@@ -168,7 +177,6 @@ const ChatPage: React.FC = () => {
 
     return (
         <div className="flex h-screen bg-[#000] font-roboto">
-            {/* Main chat area */}
             <div className="flex-1 flex flex-col items-center justify-center p-4">
                 <div className='absolute z-10 w-8 h-auto top-6 left-6'>
                     <Link to="/dash">
@@ -191,27 +199,32 @@ const ChatPage: React.FC = () => {
                                 <div
                                     key={index}
                                     className={`mb-4 flex ${msg.sender === senderName ? 'justify-end' : 'justify-start items-center'}`}
-                                >
+                                    >
                                     {msg.sender !== senderName && (
-                                        <div className="bg-[#2B2B2B] p-3 rounded-lg max-w-xs">
-                                            <span className="block text-xs text-gray-400">
-                                                {msg.sender} - {new Date(msg.timestamp).toLocaleTimeString()}
-                                            </span>
-                                            <p className="text-white">{msg.message}</p>
-                                        </div>
+                                        <>
+                                            <img src={UserIcon} alt="User Icon" className="w-8 h-8 mr-4" />
+                                            <div className="text-white">
+                                                <span className="block text-xs text-gray-300">
+                                                    {msg.sender} - {new Date(msg.timestamp).toLocaleTimeString()}
+                                                </span>
+                                                <p>{msg.message}</p>
+                                            </div>
+                                        </>
                                     )}
                                     {msg.sender === senderName && (
-                                        <div className="bg-[#150E0E] p-3 rounded-lg max-w-xs">
-                                            <span className="block text-xs text-gray-400">
+                                        <div
+                                        className="p-2 bg-[#150E0E] text-white rounded-[20px] px-4"
+                                        style={{ maxWidth: '60%' }}
+                                    >
+                                        <span className="block text-xs text-gray-500">
                                                 {msg.sender} - {new Date(msg.timestamp).toLocaleTimeString()}
                                             </span>
-                                            <p className="text-white">{msg.message}</p>
+                                            <p>{msg.message}</p>
                                         </div>
                                     )}
                                 </div>
                             ))
                         )}
-                        {/* Dummy div to scroll to */}
                         <div ref={bottomRef} />
                     </div>
                 </div>
@@ -242,7 +255,6 @@ const ChatPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Right-side contact list */}
             <div className="w-1/3 bg-[#1a1a1a] p-4 text-white">
                 <h2 className="text-xl font-semibold mb-4">Contacts</h2>
                 <ul className="space-y-4">
@@ -268,7 +280,6 @@ const ChatPage: React.FC = () => {
                     )}
                 </ul>
 
-                {/* Add contact input and plus icon */}
                 <div className="mt-8 flex items-center">
                     <input
                         type="text"
