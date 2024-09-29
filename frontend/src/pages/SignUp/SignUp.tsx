@@ -58,8 +58,16 @@ const SignUp: React.FC = () => {
     }
   };
 
+  // Handle keydown event for the Enter key
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent form submission if in a form
+      handleSignUp();
+    }
+  };
+
   return (
-    <div className="relative flex flex-col items-center justify-center h-screen bg-black font-roboto-condensed">
+    <div className="relative flex flex-col items-center justify-center h-screen bg-black">
       <motion.img
         src={KinesisLogo}
         alt="Kinesis Logo"
@@ -90,6 +98,7 @@ const SignUp: React.FC = () => {
         placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        onKeyDown={handleKeyDown} // Add onKeyDown event
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}

@@ -66,7 +66,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
 
   return (
     <motion.div
-      className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8 font-roboto-condensed"
+      className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -173,7 +173,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen bg-black text-white relative p-8 font-roboto-condensed">
+    <div className="h-screen bg-black text-white relative p-8">
       <motion.img
         src={Left}
         alt="Left Side Graphic"
@@ -203,9 +203,11 @@ const Dashboard: React.FC = () => {
           onMouseEnter={() => setHoveredIcon('SOLO')}
           onMouseLeave={() => setHoveredIcon(null)}
           onClick={() => navigate('/solo')}
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.1, zIndex: 10 }}
+          initial={{ zIndex: 1 }}
+          animate={{ zIndex: hoveredIcon === 'SOLO' ? 10 : 1 }}
         >
-          <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">SOLO</div>
+            <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">SOLO</div>
           <div className="w-40 h-40 bg-transparent border-2 border-[#FF3A3A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FF3A3A] hover:z-30">
             <img
               src={hoveredIcon === 'SOLO' ? SoloHover : Solo}
@@ -217,14 +219,13 @@ const Dashboard: React.FC = () => {
 
         {}
         <motion.div
-          className="relative flex items-center justify-center cursor-pointer"
-          onMouseEnter={() => setHoveredIcon('ACHIEVEMENTS')}
-          onMouseLeave={() => setHoveredIcon(null)}
-          onClick={() => navigate("/achievements")}
-          whileHover={{ scale: 1.1 }}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.7 }} 
+        className="relative flex items-center justify-center cursor-pointer"
+        onMouseEnter={() => setHoveredIcon('ACHIEVEMENTS')}
+        onMouseLeave={() => setHoveredIcon(null)}
+        onClick={() => navigate("/achievements")}
+        whileHover={{ scale: 1.1, zIndex: 10 }}
+        initial={{ scale: 0, zIndex: 1 }}
+        animate={{ scale: 1, zIndex: hoveredIcon === 'ACHIEVEMENTS' ? 10 : 1 }}
         >
           <div className="absolute top-[-3rem] left-[18rem] transform text-xl font-medium z-20 italic">MY ACHIEVEMENTS</div>
           <div className="mt-[-2rem] absolute w-40 h-40 bg-transparent border-2 border-[#FFB03A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FFB03A] hover:z-30" style={{ left: "7rem" }}>
@@ -236,15 +237,13 @@ const Dashboard: React.FC = () => {
           </div>
         </motion.div>
 
-        {}
         <motion.div
           className="relative flex items-center justify-center mt-[-2rem] cursor-pointer"
           onMouseEnter={() => setHoveredIcon('DUO')}
           onMouseLeave={() => setHoveredIcon(null)}
-          whileHover={{ scale: 1.1 }}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.68, -0.55, 0.27, 1.55], delay: 0.8 }} 
+          whileHover={{ scale: 1.1, zIndex: 10 }}
+          initial={{ scale: 0, zIndex: 1 }}
+          animate={{ scale: 1, zIndex: hoveredIcon === 'DUO' ? 10 : 1 }}
         >
           <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">DUO</div>
           <div className="w-40 h-40 bg-transparent border-2 border-[#FF833A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FF833A] hover:z-30">
