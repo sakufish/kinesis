@@ -1,16 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const Chat = require('../models/ChatModel');
+const User = require('../models/UserModel');
 
-// Fetch chat between two users
 router.get('/:userId1/:userId2', async (req, res) => {
     const { userId1, userId2 } = req.params;
-    
+
     try {
-        const participants = [userId1, userId2].sort(); // Sort the userIds for consistent query
+        const participants = [userId1, userId2].sort(); 
         let chat = await Chat.findOne({ userIds: participants });
 
-        // If no chat exists, create one with the participants
         if (!chat) {
             chat = new Chat({
                 userIds: participants,
@@ -25,25 +24,28 @@ router.get('/:userId1/:userId2', async (req, res) => {
     }
 });
 
-// Post a message to the chat
 router.post('/:userId1/:userId2/message', async (req, res) => {
     const { userId1, userId2 } = req.params;
     const { message } = req.body;
 
     try {
-        const participants = [userId1, userId2].sort(); // Sort the userIds for consistent query
+        const sender = await User.findOne({ userId: userId1 });
+        if (!sender) {
+            return res.status(404).json({ error: 'Sender not found' });
+        }
+
+        const participants = [userId1, userId2].sort(); 
         let chat = await Chat.findOne({ userIds: participants });
 
         if (!chat) {
-            // If no chat exists, create a new one with the participants
             chat = new Chat({
                 userIds: participants,
                 messages: [],
             });
         }
 
-        // Add the new message to the chat
         const newMessage = {
+            sender: sender.name, 
             message,
             timestamp: new Date(),
         };

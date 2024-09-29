@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 interface Message {
     message: string;
     timestamp: string;
+    sender: string;
 }
 
 const ChatPage: React.FC = () => {
@@ -12,8 +13,10 @@ const ChatPage: React.FC = () => {
     const [recipientId, setRecipientId] = useState<string>('');
     const [message, setMessage] = useState<string>('');
     const [messages, setMessages] = useState<Message[]>([]);
+    const [senderName, setSenderName] = useState<string>('');
 
     const fetchMessages = async () => {
+        if (!recipientId) return;
         try {
             const response = await axios.get(`http://localhost:3000/api/chat/${userId}/${recipientId}`);
             setMessages(response.data);
@@ -23,25 +26,40 @@ const ChatPage: React.FC = () => {
     };
 
     const sendMessage = async () => {
-        if (!message.trim()) return;
+        if (!message.trim() || !recipientId) return;
         try {
             await axios.post(`http://localhost:3000/api/chat/${userId}/${recipientId}/message`, { message });
             setMessage('');
-            fetchMessages(); // Refresh the messages after sending
+            fetchMessages();
         } catch (error) {
             console.error('Error sending message:', error);
         }
     };
 
+    const fetchSenderName = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/user/${userId}`);
+            setSenderName(response.data.name);
+        } catch (error) {
+            console.error('Error fetching sender name:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSenderName();
+    }, [userId]);
+
     useEffect(() => {
         if (recipientId) {
             fetchMessages();
+            const interval = setInterval(fetchMessages, 2000);
+            return () => clearInterval(interval);
         }
     }, [recipientId]);
 
     return (
         <div className="flex flex-col items-center justify-center p-4">
-            <h1 className="text-2xl font-bold mb-4">Chat with User</h1>
+            <h1 className="text-2xl font-bold mb-4">Chat</h1>
             <input
                 type="text"
                 value={recipientId}
@@ -54,9 +72,21 @@ const ChatPage: React.FC = () => {
                     <p>No messages yet.</p>
                 ) : (
                     messages.map((msg, index) => (
-                        <div key={index} className="mb-2">
-                            <span className="text-sm">{new Date(msg.timestamp).toLocaleString()}</span>
-                            <p>{msg.message}</p>
+                        <div
+                            key={index}
+                            className={`mb-2 flex ${msg.sender === senderName ? 'justify-end' : 'justify-start'}`}
+                        >
+                            <div
+                                className={`p-2 rounded-lg ${
+                                    msg.sender === senderName ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
+                                }`}
+                                style={{ maxWidth: '60%' }}
+                            >
+                                <span className="block text-xs text-gray-600">
+                                    {msg.sender} - {new Date(msg.timestamp).toLocaleTimeString()}
+                                </span>
+                                <p>{msg.message}</p>
+                            </div>
                         </div>
                     ))
                 )}
