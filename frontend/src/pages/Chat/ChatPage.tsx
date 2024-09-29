@@ -85,7 +85,7 @@ const ChatPage: React.FC = () => {
                 value={recipientId}
                 onChange={(e) => setRecipientId(e.target.value)}
                 placeholder="Enter recipient UUID"
-                className="border-none py-2 bg-[#322727] text-center text-white placeholder-gray-500 rounded-md w-full max-w-md font-roboto"
+                className="border-none py-2 bg-[#322727] text-center text-[#515151] placeholder-[#bfbfbf] rounded-md w-full max-w-md font-roboto"
             />
             <div className="w-full max-w-md border-none p-4 h-64 overflow-y-scroll bg-[#241919] rounded-md font-roboto no-scrollbar">
                 {messages.length === 0 ? (
@@ -142,7 +142,7 @@ const ChatPage: React.FC = () => {
                 />
             </div>
 
-            <p className="text-white font-roboto mt-2">User ID: {userId}</p>
+            <p className="text-[#8c8c8c] font-roboto mt-2">User ID: {userId}</p>
 
             <div className="absolute bottom-20 left-20 font-roboto">
                 <Link to="/dash">
