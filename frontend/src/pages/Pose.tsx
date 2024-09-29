@@ -325,6 +325,10 @@ const Pose = () => {
                             })}
                         </ul>
                     </div>
+
+                    <div className="absolute bottom-0 right-0 m-4">
+                        <iframe style={{ borderRadius: '12px' }} src="https://open.spotify.com/embed/track/42VsgItocQwOQC3XWZ8JNA?utm_source=generator&theme=0" width="100%" height="100" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>
                 </div>
             )}
         </div>
