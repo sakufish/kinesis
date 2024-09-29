@@ -8,6 +8,8 @@ import Solo from './pages/solo/Solo';
 import Achievement from './pages/Achievements/Achievements';
 
 import Guided from './pages/Guided/Guided';
+import Chat from './pages/Chat/ChatPage';
+
 
 const App = () => {
   return (
@@ -18,11 +20,8 @@ const App = () => {
         <Route path="/" element = {<SignUp />} />
         <Route path="/dash" element = {<Dash />} />
         <Route path="/solo" element = {<Solo />} />
-
+        <Route path="/chat" element = {<Chat />} />
         <Route path="/achievements" element = {< Achievement/>} />
-        {/* <Route path="/workout" element = {<Workout />} /> */}
-
-
         <Route path="/guided" element = {<Guided />} />
       </Routes>
     </Router>
