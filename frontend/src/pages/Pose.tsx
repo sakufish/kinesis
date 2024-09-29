@@ -13,8 +13,11 @@ import calibrate from './workout/assets/calibrate.svg';
 import CountICON from './workout/assets/count.svg';
 import Konva from 'konva';
 import home from './Achievements/assets/home.png';
+import send from './Chat/assets/send.png';
 
 import { Circle, Layer, Line, Stage } from 'react-konva';
+
+const usernames = ['User1', 'User2', 'User3', 'User4'];
 
 const detectorConfig = {
     runtime: 'tfjs',
@@ -51,6 +54,33 @@ const Pose = () => {
     const [pose, setPose] = useState<poseDetection.Pose | null>(null);
 
     const webcamRef = useRef<Webcam>(null);
+
+
+    const [showMenu, setShowMenu] = useState(false); // State to toggle menu visibility
+    const [selectedUsername, setSelectedUsername] = useState<string | null>(null); // Track selected username
+    const menuRef = useRef<HTMLDivElement | null>(null); // Reference to menu for click outside
+    const handleClickOutside = (event: MouseEvent) => {
+        if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+            setShowMenu(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const toggleMenu = () => {
+        setShowMenu((prev) => !prev);
+    };
+
+    const handleUsernameClick = (username: string) => {
+        setSelectedUsername((prev) => (prev === username ? null : username));
+    };
+
+
 
     useEffect(() => {
         tf.setBackend("webgl").then(() => {
@@ -495,6 +525,33 @@ const Pose = () => {
                                     <label htmlFor="skeleton" className="flex flex-row justify-center items-center">Show Skeleton?</label>
                                     <input type="checkbox" id="skeleton" checked={showSkeleton} onChange={(e) => setShowSkeleton(e.target.checked)} />  
                                 </div>
+                                <div className="mt-8 flex space-x-4 z-10">
+<button
+                            onClick={toggleMenu}
+                            className="flex items-center p-3 bg-[#241919] text-white rounded-md hover:bg-[#3a3a3a] transition duration-200"
+                        >
+                            <img src={send} alt="Send" className="w-5 h-5 mr-2" />
+                            Send Progress
+                        </button>                                        {showMenu && (
+                            <div ref={menuRef} className="absolute mt-2 p-4 bg-[#1a1a1a] rounded-md shadow-lg z-20">
+                                <h3 className="text-white mb-2">Select Username:</h3>
+                                <ul className="space-y-2">
+                                    {usernames.map((username) => (
+                                        <li
+                                            key={username}
+                                            onClick={() => handleUsernameClick(username)}
+                                            className={`cursor-pointer ${
+                                                selectedUsername === username ? 'text-orange-500' : 'text-white'
+                                            } hover:text-orange-300 transition-colors duration-200`}
+                                        >
+                                            {username}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                                    </div>
                             </div>
 
                             
