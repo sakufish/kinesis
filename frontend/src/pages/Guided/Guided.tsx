@@ -57,8 +57,6 @@ Adjust the number of reps and rest times according to the desired difficulty lev
 I have the following injuries: ${userData.injuries.join(",")}. If none are listed, ignore. Modify the exercises as necessary to avoid strain on my injured areas. 
 I also provided the following additional details: ${userData.details}. If none are listed, ignore. After each exercise block, include a rest period based on the difficulty of the exercise.
 
-The first one or two exercises should be less intense to warm up, and the last one or two exercises should be more intense to finish strong.
-
 ONLY GENERATE ONE WORKOUT PLAN. 
 
 For your reasoning for each exercise, include the following in a casual form:
@@ -66,7 +64,6 @@ For your reasoning for each exercise, include the following in a casual form:
 - Why the exercise targets the ${muscleGroup}.
 - How the exercise doesn't strain my injuries, if applicable.
 - How the exercise aligns with my additional details, if applicable.
-- If the exercise is a warm-up or finisher, mention that.
 
 Use this format for the output:
 [

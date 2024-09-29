@@ -1,44 +1,41 @@
 import * as poseDetection from "@tensorflow-models/pose-detection";
 
-const getAngle = (p1, p2, p3, flipped) => {
-    
+interface Point {
+    x: number;
+    y: number;
+}
+
+const getAngle = (p1: Point, p2: Point, p3: Point, flipped: boolean): number => {
     const v1x = p1.x - p2.x;
     const v1y = p1.y - p2.y;
-  
-    
+
     const v2x = p3.x - p2.x;
     const v2y = p3.y - p2.y;
-  
-    
+
     const dotProduct = v1x * v2x + v1y * v2y;
-  
-    
+
     const magV1 = Math.sqrt(v1x * v1x + v1y * v1y);
     const magV2 = Math.sqrt(v2x * v2x + v2y * v2y);
-  
-    
+
     const angleRad = Math.acos(dotProduct / (magV1 * magV2));
-  
-    
+
     let angleDeg = angleRad * (180 / Math.PI);
-  
-    
+
     const crossProduct = v1x * v2y - v1y * v2x;
     const angle360 = Math.atan2(crossProduct, dotProduct) * (180 / Math.PI);
-  
-    
+
     if (angle360 < 0) {
-      angleDeg = 360 + angle360;
+        angleDeg = 360 + angle360;
     } else {
-      angleDeg = angle360;
+        angleDeg = angle360;
     }
 
     if (flipped) {
         angleDeg = 360 - angleDeg;
     }
-  
+
     return angleDeg;
-  }
+}
 
 const workouts: {
     [key: string]: {
@@ -52,6 +49,94 @@ const workouts: {
     }
 } = {
     "Pushups": {
+        startPercentage: 0.2,
+        middlePercentage: 0.7,
+        function: (pose) => {
+            const leftShoulderY = pose.keypoints[5].y;
+            const rightShoulderY = pose.keypoints[6].y;
+
+            const shoulderY = (leftShoulderY + rightShoulderY) / 2;
+
+            return shoulderY; 
+        },
+        postureFunction: (pose) => {
+            const leftShoulder = pose.keypoints[5];
+            const rightShoulder = pose.keypoints[6];
+            const leftHip = pose.keypoints[11];
+            const rightHip = pose.keypoints[12];
+            const leftKnee = pose.keypoints[13];
+            const rightKnee = pose.keypoints[14];
+
+            const avgShoulder = { x: (leftShoulder.x + rightShoulder.x) / 2, y: (leftShoulder.y + rightShoulder.y) / 2 };
+            const avgHip = { x: (leftHip.x + rightHip.x) / 2, y: (leftHip.y + rightHip.y) / 2 };
+            const avgKnee = { x: (leftKnee.x + rightKnee.x) / 2, y: (leftKnee.y + rightKnee.y) / 2 };
+
+            const flipped = avgShoulder.x < avgHip.x;
+
+            const shoulderHipAngle = getAngle(avgShoulder, avgHip, avgKnee, flipped);
+
+            if (shoulderHipAngle < 140) {
+                return {
+                    status: "bad",
+                    message: "Your hips are too high. Make sure your body is in a straight line."
+                }
+            } else if (shoulderHipAngle > 200) {
+                return {
+                    status: "bad",
+                    message: "Your hips are too low. Make sure your body is in a straight line."
+                }
+            } else {
+                return {
+                    status: "good",
+                }
+            }
+        }
+    },
+    "Triangle Pushups": {
+        startPercentage: 0.2,
+        middlePercentage: 0.7,
+        function: (pose) => {
+            const leftShoulderY = pose.keypoints[5].y;
+            const rightShoulderY = pose.keypoints[6].y;
+
+            const shoulderY = (leftShoulderY + rightShoulderY) / 2;
+
+            return shoulderY; 
+        },
+        postureFunction: (pose) => {
+            const leftShoulder = pose.keypoints[5];
+            const rightShoulder = pose.keypoints[6];
+            const leftHip = pose.keypoints[11];
+            const rightHip = pose.keypoints[12];
+            const leftKnee = pose.keypoints[13];
+            const rightKnee = pose.keypoints[14];
+
+            const avgShoulder = { x: (leftShoulder.x + rightShoulder.x) / 2, y: (leftShoulder.y + rightShoulder.y) / 2 };
+            const avgHip = { x: (leftHip.x + rightHip.x) / 2, y: (leftHip.y + rightHip.y) / 2 };
+            const avgKnee = { x: (leftKnee.x + rightKnee.x) / 2, y: (leftKnee.y + rightKnee.y) / 2 };
+
+            const flipped = avgShoulder.x < avgHip.x;
+
+            const shoulderHipAngle = getAngle(avgShoulder, avgHip, avgKnee, flipped);
+
+            if (shoulderHipAngle < 140) {
+                return {
+                    status: "bad",
+                    message: "Your hips are too high. Make sure your body is in a straight line."
+                }
+            } else if (shoulderHipAngle > 200) {
+                return {
+                    status: "bad",
+                    message: "Your hips are too low. Make sure your body is in a straight line."
+                }
+            } else {
+                return {
+                    status: "good",
+                }
+            }
+        }
+    },
+    "Archer Pushups": {
         startPercentage: 0.2,
         middlePercentage: 0.7,
         function: (pose) => {
