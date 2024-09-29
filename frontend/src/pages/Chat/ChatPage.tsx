@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -17,6 +17,8 @@ interface Message {
 interface Contact {
     recipientId: string;
     recipientName: string;
+    lastMessage: string;
+    lastMessageTime: string;
 }
 
 const ChatPage: React.FC = () => {
@@ -28,6 +30,9 @@ const ChatPage: React.FC = () => {
     const [newContactUUID, setNewContactUUID] = useState<string>('');
     const [senderName, setSenderName] = useState<string>('');
     const [isShrinking, setIsShrinking] = useState<boolean>(false);
+
+    // Reference to the last message div
+    const bottomRef = useRef<HTMLDivElement | null>(null);
 
     const fetchContacts = async () => {
         try {
@@ -45,7 +50,19 @@ const ChatPage: React.FC = () => {
         if (!recipientId) return;
         try {
             const response = await axios.get(`http://localhost:3000/api/chat/${userId}/${recipientId}`);
-            setMessages(response.data);
+            const fetchedMessages: Message[] = response.data;
+            setMessages(fetchedMessages);
+
+            // Update the contact with the last message (whether from you or the contact)
+            const lastMessage = fetchedMessages[fetchedMessages.length - 1];
+            if (lastMessage) {
+                const lastMessageSender = lastMessage.sender === senderName ? "me" : lastMessage.sender;
+                const formattedMessage = `${lastMessageSender}: ${lastMessage.message}`;
+                const lastMessageTime = lastMessage.timestamp;
+                
+                // Update the contact with the last message and time
+                updateContact(recipientId, formattedMessage, lastMessageTime);
+            }
         } catch (error) {
             console.error('Error fetching messages:', error);
         }
@@ -54,9 +71,16 @@ const ChatPage: React.FC = () => {
     const sendMessage = async () => {
         if (!message.trim() || !recipientId) return;
         try {
-            await axios.post(`http://localhost:3000/api/chat/${userId}/${recipientId}/message`, { message });
+            const timestamp = new Date().toISOString();
+            await axios.post(`http://localhost:3000/api/chat/${userId}/${recipientId}/message`, { message, timestamp });
+            
+            // Update the messages and clear input
             setMessage('');
             fetchMessages();
+
+            // Update contacts with the last message and timestamp
+            const formattedMessage = `me: ${message}`;
+            updateContact(recipientId, formattedMessage, timestamp);
         } catch (error) {
             console.error('Error sending message:', error);
         }
@@ -80,6 +104,23 @@ const ChatPage: React.FC = () => {
             console.error('Error fetching sender name:', error);
         }
     };
+
+    const updateContact = (contactUUID: string, lastMessage: string, lastMessageTime: string) => {
+        setContacts((prevContacts) =>
+            prevContacts.map((contact) =>
+                contact.recipientId === contactUUID
+                    ? { ...contact, lastMessage, lastMessageTime }
+                    : contact
+            )
+        );
+    };
+
+    // Scroll to the bottom of the chat when messages change or a DM is opened
+    useEffect(() => {
+        if (bottomRef.current) {
+            bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
 
     useEffect(() => {
         fetchSenderName();
@@ -105,7 +146,12 @@ const ChatPage: React.FC = () => {
             const response = await axios.get(`http://localhost:3000/api/user/${newContactUUID}`);
             const contactName = response.data.name;
 
-            const newContact: Contact = { recipientId: newContactUUID, recipientName: contactName };
+            const newContact: Contact = {
+                recipientId: newContactUUID,
+                recipientName: contactName,
+                lastMessage: "No messages yet",
+                lastMessageTime: new Date().toLocaleTimeString(),
+            };
             setContacts((prevContacts) => [...prevContacts, newContact]);
 
             setNewContactUUID('');
@@ -122,6 +168,7 @@ const ChatPage: React.FC = () => {
 
     return (
         <div className="flex h-screen bg-[#000] font-roboto">
+            {/* Main chat area */}
             <div className="flex-1 flex flex-col items-center justify-center p-4">
                 <div className='absolute z-10 w-8 h-auto top-6 left-6'>
                     <Link to="/dash">
@@ -143,33 +190,29 @@ const ChatPage: React.FC = () => {
                             messages.map((msg, index) => (
                                 <div
                                     key={index}
-                                    className={`mb-2 flex ${msg.sender === senderName ? 'justify-end' : 'justify-start items-center'}`}
+                                    className={`mb-4 flex ${msg.sender === senderName ? 'justify-end' : 'justify-start items-center'}`}
                                 >
                                     {msg.sender !== senderName && (
-                                        <>
-                                            <img src={UserIcon} alt="User Icon" className="w-8 h-8 mr-4" />
-                                            <div className="text-white">
-                                                <span className="block text-xs text-gray-300">
-                                                    {msg.sender} - {new Date(msg.timestamp).toLocaleTimeString()}
-                                                </span>
-                                                <p>{msg.message}</p>
-                                            </div>
-                                        </>
-                                    )}
-                                    {msg.sender === senderName && (
-                                        <div
-                                            className="p-2 bg-[#150E0E] text-white rounded-[20px] px-4"
-                                            style={{ maxWidth: '60%' }}
-                                        >
-                                            <span className="block text-xs text-gray-500">
+                                        <div className="bg-[#2B2B2B] p-3 rounded-lg max-w-xs">
+                                            <span className="block text-xs text-gray-400">
                                                 {msg.sender} - {new Date(msg.timestamp).toLocaleTimeString()}
                                             </span>
-                                            <p>{msg.message}</p>
+                                            <p className="text-white">{msg.message}</p>
+                                        </div>
+                                    )}
+                                    {msg.sender === senderName && (
+                                        <div className="bg-[#150E0E] p-3 rounded-lg max-w-xs">
+                                            <span className="block text-xs text-gray-400">
+                                                {msg.sender} - {new Date(msg.timestamp).toLocaleTimeString()}
+                                            </span>
+                                            <p className="text-white">{msg.message}</p>
                                         </div>
                                     )}
                                 </div>
                             ))
                         )}
+                        {/* Dummy div to scroll to */}
+                        <div ref={bottomRef} />
                     </div>
                 </div>
 
@@ -199,6 +242,7 @@ const ChatPage: React.FC = () => {
                 </div>
             </div>
 
+            {/* Right-side contact list */}
             <div className="w-1/3 bg-[#1a1a1a] p-4 text-white">
                 <h2 className="text-xl font-semibold mb-4">Contacts</h2>
                 <ul className="space-y-4">
@@ -206,16 +250,25 @@ const ChatPage: React.FC = () => {
                         <p>No contacts yet.</p>
                     ) : (
                         contacts.map((contact) => (
-                            <li key={contact.recipientId} onClick={() => selectContact(contact.recipientId)} className="cursor-pointer hover:text-[#FF833A] transition">
-                                <div className="flex items-center space-x-2">
-                                    <img src={UserIcon} alt="User Icon" className="w-6 h-6" />
-                                    <span>{contact.recipientName}</span>
+                            <li key={contact.recipientId} onClick={() => selectContact(contact.recipientId)} className="cursor-pointer hover:bg-[#2B2B2B] p-4 rounded-lg transition-all">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center space-x-2">
+                                        <img src={UserIcon} alt="User Icon" className="w-6 h-6" />
+                                        <div>
+                                            <p className="font-semibold">{contact.recipientName}</p>
+                                            <p className="text-xs text-gray-400">{contact.lastMessage}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-xs text-gray-400">
+                                        {new Date(contact.lastMessageTime).toLocaleTimeString()}
+                                    </div>
                                 </div>
                             </li>
                         ))
                     )}
                 </ul>
 
+                {/* Add contact input and plus icon */}
                 <div className="mt-8 flex items-center">
                     <input
                         type="text"
