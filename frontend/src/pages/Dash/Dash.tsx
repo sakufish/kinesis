@@ -241,6 +241,7 @@ const Dashboard: React.FC = () => {
           className="relative flex items-center justify-center mt-[-2rem] cursor-pointer"
           onMouseEnter={() => setHoveredIcon('DUO')}
           onMouseLeave={() => setHoveredIcon(null)}
+          onClick={() => navigate("/chat")}
           whileHover={{ scale: 1.1, zIndex: 10 }}
           initial={{ scale: 0, zIndex: 1 }}
           animate={{ scale: 1, zIndex: hoveredIcon === 'DUO' ? 10 : 1 }}
