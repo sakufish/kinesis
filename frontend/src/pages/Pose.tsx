@@ -12,7 +12,7 @@ import frame from './workout/assets/frame.png';
 import calibrate from './workout/assets/calibrate.svg';
 import CountICON from './workout/assets/count.svg';
 import Konva from 'konva';
-import { Circle, Layer, Stage } from 'react-konva';
+import { Circle, Layer, Line, Stage } from 'react-konva';
 
 const detectorConfig = {
     runtime: 'tfjs',
@@ -45,6 +45,7 @@ const Pose = () => {
     const [isStartingPositionCountdownPlaying, setIsStartingPositionCountdownPlaying] = useState(false);
     const [isMiddlePositionCountdownPlaying, setIsMiddlePositionCountdownPlaying] = useState(false);
 
+    const [showSkeleton, setShowSkeleton] = useState(true);
     const [pose, setPose] = useState<poseDetection.Pose | null>(null);
 
     const webcamRef = useRef<Webcam>(null);
@@ -136,6 +137,23 @@ const Pose = () => {
     }
 
     useEffect(() => {
+        if (!detector || !webcamRef.current || !webcamRef.current.video) {
+            return;
+        }
+        const interval = setInterval(() => {
+            getPoses().then((poses) => {
+                if (!poses) {
+                    return;
+                }
+
+                setPose(poses[0]);
+            });
+        }, 10);
+
+        return () => clearInterval(interval);
+    }, [detector, getPoses, webcamRef.current ? webcamRef.current.video : null]);
+
+    useEffect(() => {
         const interval = setInterval(() => {
             if (!startNum || !middleNum || !isCounting) {
                 return;
@@ -159,23 +177,6 @@ const Pose = () => {
     
         return () => clearInterval(interval);
     }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
-
-    useEffect(() => {
-        if (!webcamRef.current || !detector) {
-            return;
-        }
-
-        const interval = setInterval(() => {
-            getPoses().then((poses) => {
-                if (poses) {
-                    console.log(poses[0]);
-                    setPose(poses[0]);
-                }
-            });
-        }, 100);
-
-        return () => clearInterval(interval);
-    }, [detector, webcamRef]);
     
     useEffect(() => {
         let postureMeasurements: { status: "good" | "bad"; message?: string }[] = [];
@@ -303,23 +304,105 @@ const Pose = () => {
                                     height={337.5}
                                     videoConstraints={{
                                         frameRate: { max: 30 },
+                                        width: 450,
+                                        height: 337.5
                                     }}
                                     className="rounded-md relative z-10 mt-4"
                                 />
-                                <Stage
-                                    width={450}
-                                    height={337.5}
-                                    className="absolute top-0 z-20 mt-4 left-4"
-                                >
-                                    <Layer>
-                                        <Circle
-                                            x={pose?.keypoints[0].x ? pose?.keypoints[0].x : 0}
-                                            y={pose?.keypoints[0].y ? pose?.keypoints[0].y : 0}
-                                            radius={10}
-                                            fill="orange"
-                                        />
-                                    </Layer>
-                                </Stage>
+                                { showSkeleton && (
+                                    <Stage
+                                        width={450}
+                                        height={337.5}
+                                        className="absolute top-0 z-20 mt-4 left-4"
+                                    >
+                                        <Layer>
+                                            {/* for loop 0 to 16 */}
+                                            {Array.from({ length: 17 }).map((_, index) => {
+                                                return (
+                                                    <Circle
+                                                        key={index}
+                                                        x={pose?.keypoints[index].x || 0}
+                                                        y={pose?.keypoints[index].y || 0}
+                                                        radius={2}
+                                                        fill="orange"
+                                                    />
+                                                );
+                                            })}
+                                            {/* 5 to 6 */}
+                                            <Line
+                                                points={[pose?.keypoints[5].x || 0, pose?.keypoints[5].y || 0, pose?.keypoints[6].x || 0, pose?.keypoints[6].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 5 to 11 */}
+                                            <Line
+                                                points={[pose?.keypoints[5].x || 0, pose?.keypoints[5].y || 0, pose?.keypoints[11].x || 0, pose?.keypoints[11].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 6 to 12 */}
+                                            <Line
+                                                points={[pose?.keypoints[6].x || 0, pose?.keypoints[6].y || 0, pose?.keypoints[12].x || 0, pose?.keypoints[12].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 11 to 12 */}
+                                            <Line
+                                                points={[pose?.keypoints[11].x || 0, pose?.keypoints[11].y || 0, pose?.keypoints[12].x || 0, pose?.keypoints[12].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 5 to 7 */}
+                                            <Line
+                                                points={[pose?.keypoints[5].x || 0, pose?.keypoints[5].y || 0, pose?.keypoints[7].x || 0, pose?.keypoints[7].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 6 to 8 */}
+                                            <Line
+                                                points={[pose?.keypoints[6].x || 0, pose?.keypoints[6].y || 0, pose?.keypoints[8].x || 0, pose?.keypoints[8].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 11 to 13 */}
+                                            <Line
+                                                points={[pose?.keypoints[11].x || 0, pose?.keypoints[11].y || 0, pose?.keypoints[13].x || 0, pose?.keypoints[13].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 12 to 14 */}
+                                            <Line
+                                                points={[pose?.keypoints[12].x || 0, pose?.keypoints[12].y || 0, pose?.keypoints[14].x || 0, pose?.keypoints[14].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 7 to 9 */}
+                                            <Line
+                                                points={[pose?.keypoints[7].x || 0, pose?.keypoints[7].y || 0, pose?.keypoints[9].x || 0, pose?.keypoints[9].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 8 to 10 */}
+                                            <Line
+                                                points={[pose?.keypoints[8].x || 0, pose?.keypoints[8].y || 0, pose?.keypoints[10].x || 0, pose?.keypoints[10].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 13 to 15 */}
+                                            <Line
+                                                points={[pose?.keypoints[13].x || 0, pose?.keypoints[13].y || 0, pose?.keypoints[15].x || 0, pose?.keypoints[15].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                            {/* 14 to 16 */}
+                                            <Line
+                                                points={[pose?.keypoints[14].x || 0, pose?.keypoints[14].y || 0, pose?.keypoints[16].x || 0, pose?.keypoints[16].y || 0]}
+                                                stroke="orange"
+                                                strokeWidth={1}
+                                            />
+                                        </Layer>
+                                    </Stage>
+                                )}
                                 {isStartingPositionCountdownPlaying && (
                                     <div className="absolute inset-0 flex flex-col gap-2 items-center justify-center z-30 bg-black/10">
                                         <span className='text-3xl font-bold' style={{
@@ -361,6 +444,26 @@ const Pose = () => {
                                         </CountdownCircleTimer>
                                     </div>
                                 )}
+
+                                <div className="mt-8 flex space-x-4 z-10">
+                                    <button
+                                        onClick={startCalibration}
+                                        className="flex flex-row justify-center items-center"
+                                    >
+                                        <img src={calibrate} alt="Calibrate" className='w-4 h-auto mr-1' />
+                                        Start Calibration
+                                    </button>
+
+                                    <button
+                                        onClick={() => setIsCounting((prev) => !prev)}
+                                        className="flex flex-row justify-center items-center"
+                                        disabled={!startNum || !middleNum}
+                                        style={{ opacity: !startNum || !middleNum ? 0.5 : 1 }}
+                                    >                            
+                                        <img src={CountICON} alt="Count" className='w-4 h-auto mr-1'/>
+                                        {isCounting ? 'Stop Counting' : 'Start Counting'}
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="ml-8">
@@ -380,7 +483,13 @@ const Pose = () => {
                                     <span className='text-8xl'>{count}</span>
                                     <span className='italic'> / {reps}</span>
                                 </div>
+                                <div className='flex flex-row gap-2'>
+                                    <label htmlFor="skeleton" className="flex flex-row justify-center items-center">Show Skeleton?</label>
+                                    <input type="checkbox" id="skeleton" checked={showSkeleton} onChange={(e) => setShowSkeleton(e.target.checked)} />  
+                                </div>
                             </div>
+
+                            
                         </div>
                     </div>
 
