@@ -38,7 +38,7 @@ const RepProgressIndicator = (props: RepProgressIndicatorProps) => {
                     cornerRadius={[0, 0, 10, 10]}
                 />
                 <Rect
-                    x={0}
+                    x={0}   
                     y={currentPercentage ? currentPercentage * 200 : 0}
                     width={20}
                     height={5}
