@@ -484,7 +484,7 @@ const Pose = () => {
                                     <span className='text-8xl'>{count}</span>
                                     <span className='italic'> / {reps}</span>
                                 </div>
-                                <div className='flex flex-row gap-2'>
+                                <div className='flex flex-row gap-2 pt-5'>
                                     <label htmlFor="skeleton" className="flex flex-row justify-center items-center">Show Skeleton?</label>
                                     <input type="checkbox" id="skeleton" checked={showSkeleton} onChange={(e) => setShowSkeleton(e.target.checked)} />  
                                 </div>
