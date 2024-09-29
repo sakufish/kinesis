@@ -24,7 +24,7 @@ const RepProgressIndicator = (props: RepProgressIndicatorProps) => {
                     y={0}
                     width={20}
                     height={startPercentage * 200}
-                    fill="yellow"
+                    fill="orange"
                     opacity={currentPosition === "start" ? 0.5 : 0.8}
                     cornerRadius={[10, 10, 0, 0]}
                 />
@@ -33,7 +33,7 @@ const RepProgressIndicator = (props: RepProgressIndicatorProps) => {
                     y={middlePercentage * 200}
                     width={20}
                     height={(1 - middlePercentage) * 200}
-                    fill="yellow"
+                    fill="orange"
                     opacity={currentPosition === "middle" ? 0.5 : 0.8}
                     cornerRadius={[0, 0, 10, 10]}
                 />
