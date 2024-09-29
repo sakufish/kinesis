@@ -173,7 +173,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen bg-black text-white relative p-8">
+    <div className="h-screen bg-black text-white relative p-8 overflow-x-hidden">
       <motion.img
         src={Left}
         alt="Left Side Graphic"
