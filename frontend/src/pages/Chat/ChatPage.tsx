@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Logo from './assets/logo.png';
-import SendIcon from './assets/send.png'; // Assuming you have the send.png icon here
-import UserIcon from './assets/usersvg.svg'; // Assuming you have the user icon here
+import SendIcon from './assets/send.png';
+import UserIcon from './assets/usersvg.svg';
 
 interface Message {
     message: string;
@@ -17,7 +18,7 @@ const ChatPage: React.FC = () => {
     const [message, setMessage] = useState<string>('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [senderName, setSenderName] = useState<string>('');
-    const [isShrinking, setIsShrinking] = useState<boolean>(false); // State to track button shrinking
+    const [isShrinking, setIsShrinking] = useState<boolean>(false);
 
     const fetchMessages = async () => {
         if (!recipientId) return;
@@ -42,10 +43,8 @@ const ChatPage: React.FC = () => {
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            setIsShrinking(true); // Shrink the send button
+            setIsShrinking(true);
             sendMessage();
-
-            // Reset shrinking after 200ms
             setTimeout(() => {
                 setIsShrinking(false);
             }, 200);
@@ -94,7 +93,6 @@ const ChatPage: React.FC = () => {
                             key={index}
                             className={`mb-2 flex ${msg.sender === senderName ? 'justify-end' : 'justify-start items-center'} font-roboto`}
                         >
-                            {/* For messages sent by the other person */}
                             {msg.sender !== senderName && (
                                 <>
                                     <img src={UserIcon} alt="User Icon" className="w-8 h-8 mr-4" />
@@ -106,7 +104,6 @@ const ChatPage: React.FC = () => {
                                     </div>
                                 </>
                             )}
-                            {/* For messages sent by you */}
                             {msg.sender === senderName && (
                                 <div
                                     className="p-2 bg-[#150E0E] text-white rounded-[20px] px-4 font-roboto"
@@ -123,14 +120,13 @@ const ChatPage: React.FC = () => {
                 )}
             </div>
 
-            {/* Message Input with Send Icon */}
             <div className="relative w-full max-w-md mb-4 font-roboto">
                 <input
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Send an inspirational message..."
-                    onKeyDown={handleKeyPress} // Trigger sendMessage on 'Enter' key press
+                    onKeyDown={handleKeyPress}
                     className="w-full italic p-2 bg-[#241919] text-white placeholder-gray-500 rounded-md border border-[#FF833A] focus:outline-none font-roboto"
                 />
                 <img
@@ -139,12 +135,16 @@ const ChatPage: React.FC = () => {
                     onClick={sendMessage}
                     className={`absolute right-3 hover:scale-75 top-1/2 transform -translate-y-1/2 h-5 w-auto cursor-pointer transition-all duration-300 ${
                         isShrinking ? 'scale-75' : 'scale-100'
-                    }`} // Add shrinking effect
+                    }`}
                 />
             </div>
 
+            <p className="text-white font-roboto mt-2">User ID: {userId}</p>
+
             <div className="absolute bottom-20 left-20 font-roboto">
-                <img src={Logo} alt="Logo" className="bottom-10 left-10" />
+                <Link to="/dash">
+                    <img src={Logo} alt="Logo" className="bottom-10 left-10" />
+                </Link>
             </div>
         </div>
     );
