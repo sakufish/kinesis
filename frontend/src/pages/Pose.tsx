@@ -175,7 +175,7 @@ const Pose = () => {
     };
 
     return (
-        <div className="flex min-h-screen p-4 bg-black text-white relative">
+        <div className="flex min-h-screen p-4 bg-black justify-center items-center text-white relative">
             {count >= reps && !isResting && <ReactConfetti colors={["#004777", "#F7B801", "#A30000"]} recycle={false} numberOfPieces={500} />}
             
             {isResting ? (
@@ -184,11 +184,11 @@ const Pose = () => {
                     <CountdownCircleTimer
                         isPlaying
                         duration={restTime}
-                        colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                        colors={['#f7963b', '#F7B801', '#A30000', '#A30000']}
                         colorsTime={[7, 5, 2, 0]}
                         onComplete={handleRestComplete}
                     >
-                        {({ remainingTime }) => <div className="text-4xl">{remainingTime} seconds</div>}
+                        {({ remainingTime }) => <div className="text-4xl">{remainingTime}s</div>}
                     </CountdownCircleTimer>
                 </div>
             ) : (
@@ -303,14 +303,14 @@ const Pose = () => {
                         </div>
                     </div>
 
-                    <div className="w-1/4 bg-gray-900 text-white p-4 right-0 top-0 h-screen fixed">
+                    <div className="w-1/4 bg-neutral-900 text-white p-4 m-10 right-0 top-0 h-auto rounded-lg fixed">
                         <h2 className="text-2xl font-semibold italic mb-4">UPCOMING STEPS</h2>
                         <ul>
                             {Array.from({ length: exercises.length + restTimes.length - currentStepIndex - 1 }).map((_, index) => {
                                 const stepIndex = currentStepIndex + 1 + index;
                                 return stepIndex % 2 === 1 ? (
                                     <li key={index} className="mb-2">
-                                        <div className="text-sm italic">⛱ Rest - {restTimes[Math.floor(stepIndex / 2)]} seconds</div>
+                                        <div className="text-sm italic">🌱 Rest - {restTimes[Math.floor(stepIndex / 2)]}s</div>
                                     </li>
                                 ) : (
                                     <li key={index} className="mb-2">
