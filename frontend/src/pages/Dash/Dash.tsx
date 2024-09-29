@@ -246,7 +246,7 @@ const Dashboard: React.FC = () => {
           initial={{ scale: 0, zIndex: 1 }}
           animate={{ scale: 1, zIndex: hoveredIcon === 'DUO' ? 10 : 1 }}
         >
-          <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">DUO</div>
+          <div className="absolute left-[-3rem] transform -rotate-90 text-xl font-semibold z-20 italic">SOCIAL</div>
           <div className="w-40 h-40 bg-transparent border-2 border-[#FF833A] rounded-full flex items-center justify-center transition duration-200 hover:bg-[#FF833A] hover:z-30">
             <img
               src={hoveredIcon === 'DUO' ? DuoHover : Duo}
@@ -291,7 +291,7 @@ const Dashboard: React.FC = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      {userName || '@username'}
+      {'@' + userName || '@username'}
     </motion.span>
     <motion.span
       className="block text-4xl mr-10 italic font-semibold mb-16" 
