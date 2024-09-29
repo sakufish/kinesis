@@ -10,6 +10,7 @@ import BottomGlow from './assets/BottomGlow.png';
 const SignUp: React.FC = () => {
   const [name, setName] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
+  const [buttonClicked, setButtonClicked] = useState(false); // State to track button click or enter press
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +36,10 @@ const SignUp: React.FC = () => {
 
   const handleSignUp = async () => {
     if (userId) {
-      navigate('/dash');
+      setButtonClicked(true); // Trigger the button effect
+      setTimeout(() => {
+        navigate('/dash');
+      }, 500); // Navigate after the shadow transition completes
       return;
     }
 
@@ -52,7 +56,10 @@ const SignUp: React.FC = () => {
       const { userId: newUserId } = data;
 
       Cookies.set('userId', newUserId, { expires: 365, path: '/' });
-      navigate('/dash');
+      setButtonClicked(true); // Trigger the button effect
+      setTimeout(() => {
+        navigate('/dash');
+      }, 500); // Navigate after the shadow transition completes
     } catch (error) {
       console.error('Error during sign-up:', error);
     }
@@ -109,6 +116,11 @@ const SignUp: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        style={{
+          boxShadow: buttonClicked ? 'none' : '0px 4px 0px 0px rgba(255,140,0,1)', // Remove shadow on click or enter press
+        }}
       >
         ENTER
       </motion.button>
