@@ -234,6 +234,7 @@ const Pose = () => {
 
     const handleRestComplete = () => {
         setIsResting(false);
+        setCount(0);
         moveToNextStep();
     };
 
@@ -370,18 +371,18 @@ const Pose = () => {
                         </div>
                     </div>
 
-                    <div className="w-1/4 bg-neutral-900 text-white p-4 m-10 right-0 top-0 h-auto rounded-lg fixed">
+                    <div className="w-[250px] bg-neutral-900 text-white p-4 m-10 right-0 top-0 h-auto rounded-lg fixed">
                         <h2 className="text-2xl font-semibold italic mb-4">UPCOMING STEPS</h2>
                         <ul>
                             {Array.from({ length: exercises.length + restTimes.length - currentStepIndex - 1 }).map((_, index) => {
                                 const stepIndex = currentStepIndex + 1 + index;
                                 return stepIndex % 2 === 1 ? (
                                     <li key={index} className="mb-2">
-                                        <div className="text-sm italic">🌱 Rest - {restTimes[Math.floor(stepIndex / 2)]}s</div>
+                                        <div className="text-sm italic w-full"><span className='font-bold'>🌱 Rest</span><span> - {restTimes[Math.floor(stepIndex / 2)]}s</span></div>
                                     </li>
                                 ) : (
                                     <li key={index} className="mb-2">
-                                        <div className="text-sm italic">{exercises[Math.floor(stepIndex / 2)]} - {repsList[Math.floor(stepIndex / 2)]} reps</div>
+                                        <div className="text-sm italic w-full"><span className='font-bold'>{exercises[Math.floor(stepIndex / 2)]}</span><span> - {repsList[Math.floor(stepIndex / 2)]} reps</span></div>
                                     </li>
                                 );
                             })}

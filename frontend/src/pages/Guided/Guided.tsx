@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import workouts from "../../constants/workouts";
 import Cookies from 'js-cookie';
 import BG from '../solo/assets/SOLObg.png';
@@ -7,7 +8,7 @@ import BG from '../solo/assets/SOLObg.png';
 interface WorkoutLink {
     workout: string;
     reps: number;
-    rest?: number; 
+    rest?: number;
     reason: string;
 }
 
@@ -17,17 +18,24 @@ const WorkoutRedirect: React.FC = () => {
 
     const [workoutLinks, setWorkoutLinks] = useState<WorkoutLink[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [direction, setDirection] = useState(0); // For determining direction of animation
 
     const nextWorkout = () => {
-        setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, workoutLinks.length - 1));
+        if (currentIndex < workoutLinks.length - 1) {
+            setDirection(1); // Indicating forward motion
+            setCurrentIndex((prevIndex) => prevIndex + 1);
+        }
     };
 
     const previousWorkout = () => {
-        setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+        if (currentIndex > 0) {
+            setDirection(-1); // Indicating backward motion
+            setCurrentIndex((prevIndex) => prevIndex - 1);
+        }
     };
 
     const goNext = () => {
-        let queryString = workoutLinks.map(workoutLink => 
+        let queryString = workoutLinks.map(workoutLink =>
             `workout=${encodeURIComponent(workoutLink.workout)}&reps=${workoutLink.reps}${workoutLink.rest ? `&rest=${workoutLink.rest}` : ''}`
         ).join('&');
 
@@ -54,10 +62,10 @@ The first one or two exercises should be less intense to warm up, and the last o
 ONLY GENERATE ONE WORKOUT PLAN. 
 
 For your reasoning for each exercise, include the following in a casual form:
+- A unique description of the exercise.
 - Why the exercise targets the ${muscleGroup}.
-- How the exercise doesn't strain my injuries.
-- How the exercise aligns with my additional details.
-- How the number of reps and rest time aligns with my difficulty level.
+- How the exercise doesn't strain my injuries, if applicable.
+- How the exercise aligns with my additional details, if applicable.
 - If the exercise is a warm-up or finisher, mention that.
 
 Use this format for the output:
@@ -102,9 +110,28 @@ Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not inc
         generateWorkoutLink();
     }, [muscleGroup]);
 
+    // Animation variants for sliding motion
+    const variants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 1000 : -1000,
+            opacity: 0,
+            transition: { duration: 0.3, ease: "easeInOut" },
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+            transition: { duration: 0.3, ease: "easeInOut" },
+        },
+        exit: (direction: number) => ({
+            x: direction < 0 ? 1000 : -1000,
+            opacity: 0,
+            transition: { duration: 0.3, ease: "easeInOut" },
+        }),
+    };
+
     return (
         <div
-            className="relative h-screen text-white p-8 flex flex-col items-center justify-center font-roboto-condensed"
+            className="relative h-screen text-white p-8 flex flex-col items-center justify-center overflow-x-hidden"
             style={{
                 backgroundImage: `url(${BG})`,
                 backgroundSize: 'cover',
@@ -118,27 +145,57 @@ Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not inc
                 {workoutLinks.length === 0 ? (
                     <p>Loading...</p>
                 ) : (
-                    <div className="bg-[#1E1E1E] p-6 rounded-lg shadow-lg">
-                        <h2 className="text-3xl mb-4 text-[#FF833A]">{workoutLinks[currentIndex].workout}</h2>
-                        <p className="text-lg">Reps: {workoutLinks[currentIndex].reps}</p>
-                        <p className="text-lg">Rest: {workoutLinks[currentIndex].rest} seconds</p>
-                        <p className="text-md mt-4">{workoutLinks[currentIndex].reason}</p>
+                    <div className="relative w-full h-64">
+                        <AnimatePresence initial={false} custom={direction}>
+                            <motion.div
+                                key={currentIndex}
+                                custom={direction}
+                                variants={variants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                className="absolute w-full h-full"
+                            >
+                                <div className="bg-[#1E1E1E] p-6 rounded-lg shadow-lg">
+                                    <h2 className="text-3xl mb-4 text-[#FF833A]">
+                                        {currentIndex + 1}. {workoutLinks[currentIndex].workout}
+                                    </h2>
+                                    <p className="text-lg">
+                                        <span className="font-bold">Reps: </span>
+                                        {workoutLinks[currentIndex].reps}
+                                    </p>
+                                    <p className="text-lg">
+                                        <span className="font-bold">Rest: </span>
+                                        {workoutLinks[currentIndex].rest} seconds
+                                    </p>
+                                    <p className="text-md mt-4">{workoutLinks[currentIndex].reason}</p>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 )}
 
-                <div className="flex justify-between mt-10">
-                    <button
-                        onClick={previousWorkout}
-                        className="px-4 py-2 bg-[#1E1E1E] border border-white text-white rounded-md glassmorphism shadow-lg transition duration-200 hover:bg-orange-500 hover:border-orange-500"
-                    >
-                        ←
-                    </button>
-                    <button
-                        onClick={nextWorkout}
-                        className="px-4 py-2 bg-[#1E1E1E] border border-white text-white rounded-md glassmorphism shadow-lg transition duration-200 hover:bg-orange-500 hover:border-orange-500"
-                    >
-                        →
-                    </button>
+                <div className="flex mt-10 justify-between">
+                    {currentIndex !== 0 ? (
+                        <button
+                            onClick={previousWorkout}
+                            className="px-4 py-2 bg-[#1E1E1E] border border-white text-white rounded-md glassmorphism shadow-lg transition duration-200 hover:bg-orange-500 hover:border-orange-500"
+                        >
+                            ←
+                        </button>
+                    ) : (
+                        <div></div>
+                    )}
+                    {currentIndex !== workoutLinks.length - 1 ? (
+                        <button
+                            onClick={nextWorkout}
+                            className="px-4 py-2 bg-[#1E1E1E] border border-white text-white rounded-md glassmorphism shadow-lg transition duration-200 hover:bg-orange-500 hover:border-orange-500"
+                        >
+                            →
+                        </button>
+                    ) : (
+                        <div></div>
+                    )}
                 </div>
 
                 <button

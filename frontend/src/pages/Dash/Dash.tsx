@@ -66,7 +66,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
 
   return (
     <motion.div
-      className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8 font-roboto-condensed"
+      className="fixed inset-0 bg-black bg-opacity-95 flex justify-center items-center z-50 p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -173,7 +173,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen bg-black text-white relative p-8 font-roboto-condensed">
+    <div className="h-screen bg-black text-white relative p-8">
       <motion.img
         src={Left}
         alt="Left Side Graphic"
