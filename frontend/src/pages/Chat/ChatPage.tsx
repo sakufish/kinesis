@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Logo from './assets/logo.png';
 import SendIcon from './assets/send.png'; // Assuming you have the send.png icon here
 import UserIcon from './assets/usersvg.svg'; // Assuming you have the user icon here
+import home from '../Achievements/assets/home.png';
 
 interface Message {
     message: string;
@@ -75,6 +77,11 @@ const ChatPage: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center justify-center p-4 h-screen bg-[#000] font-roboto">
+            <div className='absolute z-10 w-8 h-auto top-6 left-6'>
+                <Link to="/dash">
+                    <img src={home} alt="home icon" className='cursor-pointer'/>
+                </Link>
+            </div>
             <h1 className="text-4xl italic font-bold text-white mb-4 p-2 rounded-lg w-full text-center font-roboto">
                 CHAT
             </h1>

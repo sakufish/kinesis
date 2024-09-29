@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import BG from './assets/SOLObg.png';
 import workouts from '../../constants/workouts';
+import home from '../Achievements/assets/home.png';
 
 const Solo: React.FC = () => {
   const [reps, setReps] = useState<number | ''>(''); 
@@ -20,7 +22,11 @@ const Solo: React.FC = () => {
         backgroundPosition: 'center',
       }}
     >
-      {}
+        <div className='absolute z-10 w-8 h-auto top-6 left-6'>
+          <Link to="/dash">
+            <img src={home} alt="home icon" className='cursor-pointer'/>
+          </Link>
+        </div>
       <div className="absolute inset-0 bg-black opacity-85 z-0"></div>
 
       {}
