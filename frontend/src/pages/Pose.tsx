@@ -191,6 +191,10 @@ const Pose = () => {
                     >
                         {({ remainingTime }) => <div className="text-4xl">{remainingTime}s</div>}
                     </CountdownCircleTimer>
+                    <button
+                        onClick={handleRestComplete}
+                        className="mt-4 p-2 bg-gray-500 text-white rounded-md italic"
+                    >Skip Rest</button>
                 </div>
             ) : (
                 <div className="flex-grow">
