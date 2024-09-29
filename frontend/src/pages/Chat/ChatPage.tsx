@@ -80,9 +80,6 @@ const ChatPage: React.FC = () => {
                     <img src={home} alt="home icon" className='cursor-pointer'/>
                 </Link>
             </div>
-            <h1 className="text-4xl italic font-bold text-white mb-4 p-2 rounded-lg w-full text-center font-roboto">
-                CHAT
-            </h1>
             <input
                 type="text"
                 value={recipientId}
