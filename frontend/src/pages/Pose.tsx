@@ -227,6 +227,7 @@ const Pose = () => {
     useEffect(() => {
         if (count >= reps) {
             setIsCounting(false);
+            setCount(0);
             moveToNextStep();
         }
     }, [count, reps]);
