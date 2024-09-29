@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Logo from './assets/logo.png';
-import SendIcon from './assets/send.png'; // Assuming you have the send.png icon here
-import UserIcon from './assets/usersvg.svg'; // Assuming you have the user icon here
-import PlusIcon from './assets/plus.svg'; // Assuming you have the plus icon here
+import SendIcon from './assets/send.png';
+import UserIcon from './assets/usersvg.svg';
+import PlusIcon from './assets/plus.svg';
 import home from '../Achievements/assets/home.png';
 
 interface Message {
@@ -15,8 +15,8 @@ interface Message {
 }
 
 interface Contact {
-    uuid: string;
-    name: string;
+    recipientId: string;
+    recipientName: string;
 }
 
 const ChatPage: React.FC = () => {
@@ -24,10 +24,22 @@ const ChatPage: React.FC = () => {
     const [recipientId, setRecipientId] = useState<string>(''); 
     const [message, setMessage] = useState<string>('');
     const [messages, setMessages] = useState<Message[]>([]);
-    const [contacts, setContacts] = useState<Contact[]>([]); // Array of contacts
-    const [newContactUUID, setNewContactUUID] = useState<string>(''); // New contact UUID input
+    const [contacts, setContacts] = useState<Contact[]>([]);
+    const [newContactUUID, setNewContactUUID] = useState<string>('');
     const [senderName, setSenderName] = useState<string>('');
     const [isShrinking, setIsShrinking] = useState<boolean>(false);
+
+    const fetchContacts = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/user/${userId}`);
+            const user = response.data;
+            if (user && user.chats) {
+                setContacts(user.chats);
+            }
+        } catch (error) {
+            console.error('Error fetching contacts:', error);
+        }
+    };
 
     const fetchMessages = async () => {
         if (!recipientId) return;
@@ -71,6 +83,7 @@ const ChatPage: React.FC = () => {
 
     useEffect(() => {
         fetchSenderName();
+        fetchContacts();
     }, [userId]);
 
     useEffect(() => {
@@ -82,31 +95,33 @@ const ChatPage: React.FC = () => {
     }, [recipientId]);
 
     const selectContact = (contactUUID: string) => {
-        setRecipientId(contactUUID); // Set recipientId to UUID for messaging
+        setRecipientId(contactUUID);  
     };
 
     const addContact = async () => {
         if (!newContactUUID.trim()) return;
 
         try {
-            // Fetch the contact's name from the backend using their UUID
             const response = await axios.get(`http://localhost:3000/api/user/${newContactUUID}`);
             const contactName = response.data.name;
 
-            // Add the new contact to the list with their UUID and name
-            const newContact: Contact = { uuid: newContactUUID, name: contactName };
-            setContacts([...contacts, newContact]);
+            const newContact: Contact = { recipientId: newContactUUID, recipientName: contactName };
+            setContacts((prevContacts) => [...prevContacts, newContact]);
 
-            // Clear the input field after adding
             setNewContactUUID('');
+
+            await axios.put(`http://localhost:3000/api/user/${userId}/chats`, {
+                recipientName: contactName,
+                recipientId: newContactUUID,
+                lastMessage: "No messages yet",
+            });
         } catch (error) {
-            console.error('Error fetching contact:', error);
+            console.error('Error fetching or adding contact:', error);
         }
     };
 
     return (
         <div className="flex h-screen bg-[#000] font-roboto">
-            {/* Main chat area */}
             <div className="flex-1 flex flex-col items-center justify-center p-4">
                 <div className='absolute z-10 w-8 h-auto top-6 left-6'>
                     <Link to="/dash">
@@ -171,9 +186,7 @@ const ChatPage: React.FC = () => {
                         src={SendIcon}
                         alt="Send"
                         onClick={sendMessage}
-                        className={`absolute right-3 hover:scale-75 top-1/2 transform -translate-y-1/2 h-5 w-auto cursor-pointer transition-all duration-300 ${
-                            isShrinking ? 'scale-75' : 'scale-100'
-                        }`}
+                        className={`absolute right-3 hover:scale-75 top-1/2 transform -translate-y-1/2 h-5 w-auto cursor-pointer transition-all duration-300 ${isShrinking ? 'scale-75' : 'scale-100'}`}
                     />
                 </div>
 
@@ -186,21 +199,23 @@ const ChatPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Right-side contact list */}
             <div className="w-1/3 bg-[#1a1a1a] p-4 text-white">
                 <h2 className="text-xl font-semibold mb-4">Contacts</h2>
                 <ul className="space-y-4">
-                    {contacts.map((contact) => (
-                        <li key={contact.uuid} onClick={() => selectContact(contact.uuid)} className="cursor-pointer hover:text-[#FF833A] transition">
-                            <div className="flex items-center space-x-2">
-                                <img src={UserIcon} alt="User Icon" className="w-6 h-6" />
-                                <span>{contact.name}</span>
-                            </div>
-                        </li>
-                    ))}
+                    {contacts.length === 0 ? (
+                        <p>No contacts yet.</p>
+                    ) : (
+                        contacts.map((contact) => (
+                            <li key={contact.recipientId} onClick={() => selectContact(contact.recipientId)} className="cursor-pointer hover:text-[#FF833A] transition">
+                                <div className="flex items-center space-x-2">
+                                    <img src={UserIcon} alt="User Icon" className="w-6 h-6" />
+                                    <span>{contact.recipientName}</span>
+                                </div>
+                            </li>
+                        ))
+                    )}
                 </ul>
 
-                {/* Add contact input and plus icon */}
                 <div className="mt-8 flex items-center">
                     <input
                         type="text"
