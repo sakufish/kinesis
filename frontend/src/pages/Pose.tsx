@@ -35,6 +35,7 @@ const Pose = () => {
     const [startNum, setStartNum] = useState<number | null>(null);
     const [middleNum, setMiddleNum] = useState<number | null>(null);
     const [currentPosition, setCurrentPosition] = useState<"start" | "middle">("start");
+    const [currentPosturePosition, setCurrentPosturePosition] = useState<"good" | "bad">("good");
     const [percentage, setPercentage] = useState<number | null>(null);
     const [count, setCount] = useState(0);
     const [isCounting, setIsCounting] = useState(false);
@@ -53,6 +54,8 @@ const Pose = () => {
         })
         .catch(() => window.alert("Failed to load webgl"));
     }, []);
+
+    const ttsVoice = window.speechSynthesis.getVoices()[92];
 
     const getPoses = async () => {
         if (detector && webcamRef.current && webcamRef.current.video) {
@@ -116,19 +119,31 @@ const Pose = () => {
         return Math.max(0, Math.min(1, calculatedPercentage));
     };
 
+    const getPosture = async () => {
+        const poses = await getPoses();
+        if (!poses) {
+            return null;
+        }
+
+        const workoutConfig = workouts[workout];
+        const posture = workoutConfig.postureFunction(poses[0]);
+
+        return posture;
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
             if (!startNum || !middleNum || !isCounting) {
                 return;
             }
-
+    
             getPercentage().then((percentage) => {
                 if (!percentage) {
                     return;
                 }
-
+    
                 setPercentage(percentage);
-
+    
                 if (percentage < workouts[workout].startPercentage && currentPosition === "middle") {
                     setCurrentPosition("start");
                     setCount((prevCount) => prevCount + 1);
@@ -137,14 +152,59 @@ const Pose = () => {
                 }
             });
         }, 10);
-
+    
         return () => clearInterval(interval);
     }, [detector, startNum, middleNum, currentPosition, count, isCounting]);
+    
+    useEffect(() => {
+        let postureMeasurements: { status: "good" | "bad"; message?: string }[] = [];
+
+        const interval = setInterval(() => {
+            if (!isCounting) {
+                return;
+            }
+
+            getPosture().then((posture) => {
+                if (!posture) {
+                    return;
+                }
+
+                postureMeasurements.push(posture);
+
+                if (postureMeasurements.length >= 20) {
+                    const badCount = postureMeasurements.filter(p => p.status === "bad").length;
+                    const goodCount = postureMeasurements.filter(p => p.status === "good").length;
+
+                    const majorityPosture = badCount > goodCount ? "bad" : "good";
+                    const majorityMessage = postureMeasurements.find(p => p.status === majorityPosture)?.message || "";
+
+                    if (majorityPosture === "bad" && currentPosturePosition === "good") {
+                        setCurrentPosturePosition("bad");
+                        const msg = new SpeechSynthesisUtterance(majorityMessage);
+                        msg.lang = 'en-US';
+                        msg.voice = ttsVoice;
+                        msg.rate = 1.5;
+                        window.speechSynthesis.speak(msg);
+                    } else if (majorityPosture === "good" && currentPosturePosition === "bad") {
+                        setCurrentPosturePosition("good");
+                        const msg = new SpeechSynthesisUtterance("Good job!");
+                        msg.lang = 'en-US';
+                        msg.voice = ttsVoice;
+                        msg.rate = 1.5;
+                        window.speechSynthesis.speak(msg);
+                    }
+
+                    postureMeasurements = [];
+                }
+            });
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, [detector, currentPosturePosition, isCounting]);
 
     useEffect(() => {
         if (count >= reps) {
             setIsCounting(false);
-            setCount(0);
             moveToNextStep();
         }
     }, [count, reps]);
@@ -155,9 +215,11 @@ const Pose = () => {
             setCurrentStepIndex(nextIndex);
 
             if (nextIndex % 2 === 1) {
+                
                 setRestTime(restTimes[Math.floor(nextIndex / 2)]);
                 setIsResting(true);
             } else {
+                
                 setWorkout(exercises[Math.floor(nextIndex / 2)]);
                 setReps(repsList[Math.floor(nextIndex / 2)]);
                 setIsResting(false);
