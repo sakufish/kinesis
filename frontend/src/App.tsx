@@ -8,7 +8,7 @@ import Solo from './pages/solo/Solo';
 import Achievement from './pages/Achievements/Achievements';
 
 import Guided from './pages/Guided/Guided';
-import Chat from './pages/Chat/ChatPage';
+import Chat from './pages/Chat/ChatPage'
 
 
 const App = () => {
