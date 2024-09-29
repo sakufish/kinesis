@@ -67,7 +67,7 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-screen bg-black font-roboto-condensed">
+    <div className="relative flex flex-col items-center justify-center h-screen bg-black">
       <motion.img
         src={KinesisLogo}
         alt="Kinesis Logo"
