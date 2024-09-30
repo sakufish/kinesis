@@ -20,7 +20,7 @@ const SignUp: React.FC = () => {
 
       const fetchUserData = async () => {
         try {
-          const response = await fetch(`http://localhost:3000/api/user/${existingUserId}`);
+          const response = await fetch(`https://kinesis-14vq.onrender.com/api/user/${existingUserId}`);
           const userData = await response.json();
           if (userData && userData.name) {
             setName(userData.name);
@@ -44,7 +44,7 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/signup/', {
+      const response = await fetch('https://kinesis-14vq.onrender.com/api/signup/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

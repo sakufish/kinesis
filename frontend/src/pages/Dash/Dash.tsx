@@ -23,7 +23,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/user/${userId}`);
+        const response = await fetch(`https://kinesis-14vq.onrender.com/api/user/${userId}`);
         const data = await response.json();
         if (response.ok) {
           setInjuries(data.injuries || []);
@@ -51,7 +51,7 @@ const Modal: React.FC<{ onClose: () => void; userId: string }> = ({ onClose, use
 
   const handleSavePreferences = async () => {
     try {
-      await fetch(`http://localhost:3000/api/user/${userId}/preferences`, {
+      await fetch(`https://kinesis-14vq.onrender.com/api/user/${userId}/preferences`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
       if (id) {
         setUserId(id);
         try {
-          const response = await fetch(`http://localhost:3000/api/user/${id}`);
+          const response = await fetch(`https://kinesis-14vq.onrender.com/api/user/${id}`);
           const data = await response.json();
           if (response.ok) {
             setUserName(data.name);

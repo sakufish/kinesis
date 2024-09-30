@@ -45,7 +45,7 @@ const WorkoutRedirect: React.FC = () => {
 
     const generateWorkoutLink = async () => {
         const userId = Cookies.get('userId');
-        const userResponse = await fetch(`http://localhost:3000/api/user/${userId}`);
+        const userResponse = await fetch(`https://kinesis-14vq.onrender.com/api/user/${userId}`);
         const userData = await userResponse.json();
 
         const prompt = `Generate a workout plan for me targeting ${muscleGroup} using only these exercises: ${Object.keys(workouts).join(", ")}. 
@@ -84,7 +84,7 @@ Use this format for the output:
 Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not include any extra text or characters outside the array.`;
 
         try {
-            const response = await fetch('http://localhost:3000/api/gemini', {
+            const response = await fetch('https://kinesis-14vq.onrender.com/api/gemini', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

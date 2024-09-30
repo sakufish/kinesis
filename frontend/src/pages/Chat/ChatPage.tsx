@@ -35,12 +35,12 @@ const ChatPage: React.FC = () => {
 
     const fetchContacts = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/user/${userId}`);
+            const response = await axios.get(`https://kinesis-14vq.onrender.com/api/user/${userId}`);
             const user = response.data;
             if (user && user.chats) {
                 const updatedContacts = await Promise.all(
                     user.chats.map(async (contact: Contact) => {
-                        const messageResponse = await axios.get(`http://localhost:3000/api/chat/${userId}/${contact.recipientId}`);
+                        const messageResponse = await axios.get(`https://kinesis-14vq.onrender.com/api/chat/${userId}/${contact.recipientId}`);
                         const messages: Message[] = messageResponse.data;
                         const lastMessage = messages[messages.length - 1];
                         
@@ -61,7 +61,7 @@ const ChatPage: React.FC = () => {
     const fetchMessages = async () => {
         if (!recipientId) return;
         try {
-            const response = await axios.get(`http://localhost:3000/api/chat/${userId}/${recipientId}`);
+            const response = await axios.get(`https://kinesis-14vq.onrender.com/api/chat/${userId}/${recipientId}`);
             const fetchedMessages: Message[] = response.data;
             setMessages(fetchedMessages);
 
@@ -82,7 +82,7 @@ const ChatPage: React.FC = () => {
         if (!message.trim() || !recipientId) return;
         try {
             const timestamp = new Date().toISOString();
-            await axios.post(`http://localhost:3000/api/chat/${userId}/${recipientId}/message`, { message, timestamp });
+            await axios.post(`https://kinesis-14vq.onrender.com/api/chat/${userId}/${recipientId}/message`, { message, timestamp });
             
             setMessage('');
             fetchMessages();
@@ -106,7 +106,7 @@ const ChatPage: React.FC = () => {
 
     const fetchSenderName = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/user/${userId}`);
+            const response = await axios.get(`https://kinesis-14vq.onrender.com/api/user/${userId}`);
             setSenderName(response.data.name);
         } catch (error) {
             console.error('Error fetching sender name:', error);
@@ -152,7 +152,7 @@ const ChatPage: React.FC = () => {
         if (!newContactUUID.trim()) return;
 
         try {
-            const response = await axios.get(`http://localhost:3000/api/user/${newContactUUID}`);
+            const response = await axios.get(`https://kinesis-14vq.onrender.com/api/user/${newContactUUID}`);
             const contactName = response.data.name;
 
             const newContact: Contact = {
@@ -165,7 +165,7 @@ const ChatPage: React.FC = () => {
 
             setNewContactUUID('');
 
-            await axios.put(`http://localhost:3000/api/user/${userId}/chats`, {
+            await axios.put(`https://kinesis-14vq.onrender.com/api/user/${userId}/chats`, {
                 recipientName: contactName,
                 recipientId: newContactUUID,
                 lastMessage: "No messages yet",
