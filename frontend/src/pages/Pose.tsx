@@ -11,7 +11,6 @@ import ReactConfetti from 'react-confetti';
 import frame from './workout/assets/frame.png';
 import calibrate from './workout/assets/calibrate.svg';
 import CountICON from './workout/assets/count.svg';
-import Konva from 'konva';
 import home from './Achievements/assets/home.png';
 import send from './Chat/assets/send.png';
 
@@ -510,7 +509,6 @@ const Pose = () => {
                                     middlePercentage={workouts[workout].middlePercentage}
                                     currentPosition={currentPosition}
                                     currentPercentage={percentage}
-                                    barColor="orange"
                                 />
                             </div>
 

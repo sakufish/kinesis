@@ -263,7 +263,7 @@ const workouts: {
 
             return hipY;
         },
-        postureFunction: (pose) => {
+        postureFunction: () => {
             return {
                 status: "good",
             }
@@ -349,7 +349,7 @@ const workouts: {
 
             return shoulderY;
         },
-        postureFunction: (pose) => {
+        postureFunction: () => {
             return {
                 status: "good",
             }
