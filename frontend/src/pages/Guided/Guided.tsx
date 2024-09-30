@@ -94,7 +94,7 @@ Ensure that the JSON is valid and appropriate for the ${muscleGroup}. Do not inc
 
             const data = await response.json();
             const rawResponse = data.description;
-            const cleanedResponse = rawResponse.trim();
+            const cleanedResponse = rawResponse.trim().replace('```json', '').replace('```', '');
             const workoutLinks: WorkoutLink[] = JSON.parse(cleanedResponse);
 
             setWorkoutLinks(workoutLinks);
